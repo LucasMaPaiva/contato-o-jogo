@@ -162,6 +162,19 @@ async function startServer() {
           }
           break;
 
+        case "CHAT_MESSAGE":
+          // Receive simple chat payload from client and broadcast to everyone (no state storage).
+          broadcast({ 
+            type: "CHAT_MESSAGE", 
+            message: {
+              id: Math.random().toString(36).substring(7),
+              player: data.player,
+              text: data.text,
+              timestamp: new Date().toISOString()
+            }
+          });
+          break;
+
         case "RESET":
           gameState = {
             master: null,
