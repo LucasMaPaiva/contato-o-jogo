@@ -18,7 +18,16 @@ async function startServer() {
     word: "",
     revealedLetters: "",
     players: [] as { id: string; name: string }[],
-    clues: [] as { id: string; player: string; text: string; status: 'pending' | 'contacted' | 'blocked' | 'resolved'; contactPlayer?: string; countdown?: number }[],
+    clues: [] as { 
+      id: string; 
+      player: string; 
+      text: string; 
+      authorWord: string;
+      status: 'pending' | 'contacted' | 'blocked' | 'resolved' | 'failed'; 
+      contactPlayer?: string; 
+      guessWord?: string;
+      countdown?: number;
+    }[],
   };
 
   function broadcast(data: any) {
@@ -70,6 +79,7 @@ async function startServer() {
               id: Math.random().toString(36).substring(7),
               player: player.name,
               text: data.text,
+              authorWord: data.authorWord.toUpperCase(),
               status: 'pending' as const,
             };
             gameState.clues.push(newClue);
@@ -83,6 +93,7 @@ async function startServer() {
           if (clue && clue.status === 'pending' && contactPlayer && clue.player !== contactPlayer.name) {
             clue.status = 'contacted';
             clue.contactPlayer = contactPlayer.name;
+            clue.guessWord = data.guessWord.toUpperCase();
             clue.countdown = 5;
             broadcast({ type: "STATE_UPDATE", state: gameState });
 
@@ -97,11 +108,18 @@ async function startServer() {
                 broadcast({ type: "STATE_UPDATE", state: gameState });
               } else {
                 clearInterval(timer);
-                clue.status = 'resolved';
-                // Reveal next letter
-                if (gameState.revealedLetters.length < gameState.word.length) {
-                  gameState.revealedLetters = gameState.word.substring(0, gameState.revealedLetters.length + 1);
+                
+                // Compare the words
+                if (clue.authorWord === clue.guessWord) {
+                  clue.status = 'resolved';
+                  // Reveal next letter
+                  if (gameState.revealedLetters.length < gameState.word.length) {
+                    gameState.revealedLetters = gameState.word.substring(0, gameState.revealedLetters.length + 1);
+                  }
+                } else {
+                  clue.status = 'failed';
                 }
+                
                 broadcast({ type: "STATE_UPDATE", state: gameState });
               }
             }, 1000);

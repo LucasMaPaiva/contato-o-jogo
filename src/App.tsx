@@ -7,8 +7,10 @@ type Clue = {
   id: string;
   player: string;
   text: string;
-  status: 'pending' | 'contacted' | 'blocked' | 'resolved';
+  authorWord: string;
+  status: 'pending' | 'contacted' | 'blocked' | 'resolved' | 'failed';
   contactPlayer?: string;
+  guessWord?: string;
   countdown?: number;
 };
 
@@ -28,6 +30,8 @@ export default function App() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [wordInput, setWordInput] = useState('');
   const [clueInput, setClueInput] = useState('');
+  const [clueWordInput, setClueWordInput] = useState('');
+  const [contactInputs, setContactInputs] = useState<Record<string, string>>({});
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [error, setError] = useState('');
 
@@ -88,14 +92,28 @@ export default function App() {
 
   const sendClue = (e: React.FormEvent) => {
     e.preventDefault();
-    if (clueInput.trim()) {
-      ws?.send(JSON.stringify({ type: 'SEND_CLUE', text: clueInput }));
+    if (clueInput.trim() && clueWordInput.trim()) {
+      ws?.send(JSON.stringify({ type: 'SEND_CLUE', text: clueInput, authorWord: clueWordInput }));
       setClueInput('');
+      setClueWordInput('');
     }
   };
 
-  const contactClue = (clueId: string) => {
-    ws?.send(JSON.stringify({ type: 'CONTACT', clueId }));
+  const updateContactInput = (clueId: string, word: string) => {
+    setContactInputs(prev => ({ ...prev, [clueId]: word }));
+  };
+
+  const contactClue = (clueId: string, e: React.FormEvent) => {
+    e.preventDefault();
+    const guessWord = contactInputs[clueId];
+    if (guessWord && guessWord.trim()) {
+      ws?.send(JSON.stringify({ type: 'CONTACT', clueId, guessWord: guessWord.trim() }));
+      setContactInputs(prev => {
+        const newState = { ...prev };
+        delete newState[clueId];
+        return newState;
+      });
+    }
   };
 
   const blockClue = (clueId: string) => {
@@ -269,15 +287,22 @@ export default function App() {
                 <MessageSquare size={14} /> Pistas Ativas
               </h2>
               {!isMaster && hasWord && (
-                <form onSubmit={sendClue} className="flex gap-2">
+                <form onSubmit={sendClue} className="flex gap-2 w-full max-w-lg justify-end">
                   <input
                     type="text"
                     value={clueInput}
                     onChange={(e) => setClueInput(e.target.value)}
-                    placeholder="Dê uma pista..."
-                    className="bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
+                    placeholder="Sua dica..."
+                    className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
                   />
-                  <button type="submit" className="p-2 bg-emerald-600 rounded-full hover:bg-emerald-500">
+                  <input
+                    type="text"
+                    value={clueWordInput}
+                    onChange={(e) => setClueWordInput(e.target.value)}
+                    placeholder="Palavra secreta..."
+                    className="w-32 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
+                  />
+                  <button type="submit" className="p-2 bg-emerald-600 rounded-full hover:bg-emerald-500 flex-shrink-0">
                     <Send size={14} />
                   </button>
                 </form>
@@ -285,15 +310,16 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+// skip unchanged loop condition and parent div since React will figure it out
               <AnimatePresence mode="popLayout">
-                {gameState.clues.filter(c => c.status !== 'resolved').map(clue => (
+                {gameState.clues.filter(c => c.status !== 'resolved' && c.status !== 'failed').map(clue => (
                   <motion.div
                     layout
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     key={clue.id}
-                    className={`p-5 rounded-2xl border transition-all ${
+                    className={`flex flex-col p-5 rounded-2xl border transition-all ${
                       clue.status === 'contacted' 
                         ? 'bg-emerald-500/10 border-emerald-500/30 ring-1 ring-emerald-500/20' 
                         : 'bg-[#141414] border-white/10'
@@ -321,12 +347,24 @@ export default function App() {
                         </button>
                       ) : (
                         clue.status === 'pending' && clue.player !== name && (
-                          <button 
-                            onClick={() => contactClue(clue.id)}
-                            className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-900/20"
+                          <form 
+                            onSubmit={(e) => contactClue(clue.id, e)}
+                            className="flex-1 flex gap-2"
                           >
-                            CONTATO!
-                          </button>
+                            <input
+                              type="text"
+                              value={contactInputs[clue.id] || ''}
+                              onChange={(e) => updateContactInput(clue.id, e.target.value)}
+                              placeholder="Qual palavra é?"
+                              className="flex-1 min-w-0 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500/50"
+                            />
+                            <button 
+                              type="submit"
+                              className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-900/20 whitespace-nowrap"
+                            >
+                              CONTATO!
+                            </button>
+                          </form>
                         )
                       )}
                     </div>
@@ -345,7 +383,7 @@ export default function App() {
                 ))}
               </AnimatePresence>
               
-              {gameState.clues.filter(c => c.status !== 'resolved').length === 0 && (
+              {gameState.clues.filter(c => c.status !== 'resolved' && c.status !== 'failed').length === 0 && (
                 <div className="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-2xl">
                   <p className="text-gray-500 text-sm">Nenhuma pista ativa no momento.</p>
                 </div>
@@ -355,14 +393,21 @@ export default function App() {
 
           {/* Resolved History */}
           <section className="bg-[#141414]/50 border border-white/5 rounded-2xl p-6">
-            <h2 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-4">Histórico de Sucessos</h2>
-            <div className="flex flex-wrap gap-2">
-              {gameState.clues.filter(c => c.status === 'resolved').map(c => (
-                <div key={c.id} className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs px-3 py-1 rounded-full">
-                  {c.text}
+            <h2 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-4">Histórico de Contatos</h2>
+            <div className="flex flex-col gap-3">
+              {gameState.clues.filter(c => c.status === 'resolved' || c.status === 'failed').map(c => (
+                <div key={c.id} className={`flex flex-col gap-1 border-l-2 pl-3 py-1 ${
+                  c.status === 'resolved' ? 'border-emerald-500/50 text-emerald-100' : 'border-red-500/50 text-red-100'
+                }`}>
+                  <p className="text-sm">"{c.text}"</p>
+                  <div className="flex gap-2 text-xs opacity-75">
+                    <span><strong className="opacity-100">{c.player}</strong>: {c.authorWord}</span>
+                    <span className="opacity-50">•</span>
+                    <span><strong className="opacity-100">{c.contactPlayer}</strong>: {c.guessWord}</span>
+                  </div>
                 </div>
               ))}
-              {gameState.clues.filter(c => c.status === 'resolved').length === 0 && (
+              {gameState.clues.filter(c => c.status === 'resolved' || c.status === 'failed').length === 0 && (
                 <p className="text-gray-600 text-xs italic">Nenhum contato realizado ainda.</p>
               )}
             </div>
