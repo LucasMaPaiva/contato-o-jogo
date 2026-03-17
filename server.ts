@@ -78,7 +78,8 @@ async function startServer() {
         case "SEND_CLUE":
           const player = gameState.players.find(p => p.id === id);
           const hasActiveClue = gameState.clues.some(c => c.status === 'pending' || c.status === 'contacted');
-          if (player && gameState.master !== id && !hasActiveClue) {
+          const isWordBurned = gameState.clues.some(c => c.status === 'blocked' && c.authorWord === data.authorWord.toUpperCase());
+          if (player && gameState.master !== id && !hasActiveClue && !isWordBurned) {
             const newClue = {
               id: Math.random().toString(36).substring(7),
               player: player.name,
@@ -141,8 +142,22 @@ async function startServer() {
           if (gameState.master === id) {
             const clueToBlock = gameState.clues.find(c => c.id === data.clueId);
             if (clueToBlock && (clueToBlock.status === 'pending' || clueToBlock.status === 'contacted')) {
-              clueToBlock.status = 'blocked';
-              broadcast({ type: "STATE_UPDATE", state: gameState });
+              const masterGuess = data.masterGuess.toUpperCase();
+              
+              if (masterGuess === clueToBlock.authorWord) {
+                if (masterGuess === gameState.word) {
+                  // Mestre tentou bloquear a própria palavra e acertou a pista! Eles ganham.
+                  clueToBlock.status = 'resolved';
+                  gameState.revealedLetters = gameState.word;
+                  gameState.gameStatus = 'won';
+                  broadcast({ type: "STATE_UPDATE", state: gameState });
+                } else {
+                  // Mestre bloqueou uma palavra normal com sucesso.
+                  clueToBlock.status = 'blocked';
+                  broadcast({ type: "STATE_UPDATE", state: gameState });
+                }
+              }
+              // Se errar a palavra, nada acontece na tela (o master pode ver visualmente no app, mas pro server a pista segue viva)
             }
           }
           break;

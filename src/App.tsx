@@ -117,8 +117,17 @@ export default function App() {
     }
   };
 
-  const blockClue = (clueId: string) => {
-    ws?.send(JSON.stringify({ type: 'BLOCK', clueId }));
+  const blockClue = (clueId: string, e: React.FormEvent) => {
+    e.preventDefault();
+    const guessWord = contactInputs[clueId];
+    if (guessWord && guessWord.trim()) {
+      ws?.send(JSON.stringify({ type: 'BLOCK', clueId, masterGuess: guessWord.trim() }));
+      setContactInputs(prev => {
+        const newState = { ...prev };
+        delete newState[clueId];
+        return newState;
+      });
+    }
   };
 
   const resetGame = () => {
@@ -128,7 +137,7 @@ export default function App() {
   if (!isJoined) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center p-4 font-sans">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md bg-[#141414] border border-white/10 rounded-2xl p-8 shadow-2xl"
@@ -140,7 +149,7 @@ export default function App() {
           </div>
           <h1 className="text-3xl font-bold text-center mb-2 tracking-tight">CONTATO</h1>
           <p className="text-gray-400 text-center mb-8 text-sm">O jogo de sintonia e adivinhação</p>
-          
+
           <form onSubmit={handleJoin} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Seu Nome</label>
@@ -187,7 +196,7 @@ export default function App() {
               <Users size={16} className="text-gray-400" />
               <span className="text-sm font-medium">{gameState.players.length}</span>
             </div>
-            <button 
+            <button
               onClick={resetGame}
               className="p-2 hover:bg-white/5 rounded-full transition-colors text-gray-400"
               title="Reiniciar Jogo"
@@ -218,7 +227,7 @@ export default function App() {
             ) : (
               <div className="text-center py-4">
                 <p className="text-gray-400 text-sm mb-4">Ninguém é o mestre ainda.</p>
-                <button 
+                <button
                   onClick={becomeMaster}
                   className="w-full bg-white text-black font-bold py-2 rounded-xl hover:bg-gray-200 transition-colors"
                 >
@@ -269,10 +278,10 @@ export default function App() {
             <div className="flex justify-center gap-2 flex-wrap pb-4">
               {hasWord ? (
                 gameState.word.split('').map((char, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className={`w-12 h-16 rounded-xl flex flex-shrink-0 items-center justify-center text-3xl font-black border transition-all
-                      ${i < gameState.revealedLetters.length 
+                      ${i < gameState.revealedLetters.length
                         ? (isWon ? 'bg-emerald-500 text-black border-transparent scale-110 shadow-lg' : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400')
                         : 'bg-black/40 border-white/5 text-transparent'}`}
                   >
@@ -284,9 +293,9 @@ export default function App() {
               )}
             </div>
             {isWon && (
-              <motion.div initial={{opacity:0, y: 10}} animate={{opacity:1, y: 0}} className="mt-8">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8">
                 <p className="text-xl font-bold text-white mb-2">Os adivinhadores venceram!</p>
-                <button 
+                <button
                   onClick={resetGame}
                   className="mt-2 bg-white text-black font-bold px-8 py-3 rounded-xl hover:bg-gray-200 transition-colors"
                 >
@@ -299,128 +308,153 @@ export default function App() {
           {/* Clues Section */}
           {!isWon && (
             <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                <MessageSquare size={14} /> Pistas Ativas
-              </h2>
-              {!isMaster && hasWord && !isWon && (
-                !hasActiveClue ? (
-                  <form onSubmit={sendClue} className="flex gap-2 w-full max-w-lg justify-end">
-                    <input
-                      type="text"
-                      value={clueInput}
-                      onChange={(e) => setClueInput(e.target.value)}
-                      placeholder="Sua dica..."
-                      className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
-                    />
-                    <input
-                      type="text"
-                      value={clueWordInput}
-                      onChange={(e) => setClueWordInput(e.target.value)}
-                      placeholder="Palavra secreta..."
-                      className="w-32 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
-                    />
-                    <button type="submit" className="p-2 bg-emerald-600 rounded-full hover:bg-emerald-500 flex-shrink-0">
-                      <Send size={14} />
-                    </button>
-                  </form>
-                ) : (
-                  <p className="text-xs text-yellow-500/80 italic font-medium pr-2">Aguardando resolução do contato em andamento...</p>
-                )
-              )}
-            </div>
+              <div className="flex items-center justify-between">
+                <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                  <MessageSquare size={14} /> Pistas Ativas
+                </h2>
+                {!isMaster && hasWord && !isWon && (
+                  !hasActiveClue ? (
+                    <form onSubmit={sendClue} className="flex gap-2 w-full max-w-lg justify-end">
+                      <input
+                        type="text"
+                        value={clueInput}
+                        onChange={(e) => setClueInput(e.target.value)}
+                        placeholder="Sua dica..."
+                        className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
+                      />
+                      <input
+                        type="text"
+                        value={clueWordInput}
+                        onChange={(e) => setClueWordInput(e.target.value)}
+                        placeholder="Palavra secreta..."
+                        className="w-32 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
+                      />
+                      <button type="submit" className="p-2 bg-emerald-600 rounded-full hover:bg-emerald-500 flex-shrink-0">
+                        <Send size={14} />
+                      </button>
+                    </form>
+                  ) : (
+                    <p className="text-xs text-yellow-500/80 italic font-medium pr-2">Aguardando resolução do contato em andamento...</p>
+                  )
+                )}
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-// skip unchanged loop condition and parent div since React will figure it out
-              <AnimatePresence mode="popLayout">
-                {gameState.clues.filter(c => c.status !== 'resolved' && c.status !== 'failed').map(clue => (
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    key={clue.id}
-                    className={`flex flex-col p-5 rounded-2xl border transition-all ${
-                      clue.status === 'contacted' 
-                        ? 'bg-emerald-500/10 border-emerald-500/30 ring-1 ring-emerald-500/20' 
-                        : 'bg-[#141414] border-white/10'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter bg-white/5 px-2 py-0.5 rounded">
-                        {clue.player}
-                      </span>
-                      {clue.status === 'contacted' && (
-                        <div className="flex items-center gap-2 text-emerald-400 font-black text-xl">
-                          {clue.countdown}
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-lg font-medium leading-tight mb-4">{clue.text}</p>
-                    
-                    <div className="flex gap-2">
-                      {isMaster ? (
-                        <button 
-                          onClick={() => blockClue(clue.id)}
-                          className="flex-1 bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/30 py-2 rounded-xl text-xs font-bold transition-colors"
-                        >
-                          BLOQUEAR
-                        </button>
-                      ) : (
-                        clue.status === 'pending' && clue.player !== name && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <AnimatePresence mode="popLayout">
+                  {gameState.clues.filter(c => c.status === 'pending' || c.status === 'contacted').map(clue => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      key={clue.id}
+                      className={`flex flex-col p-5 rounded-2xl border transition-all ${clue.status === 'contacted'
+                          ? 'bg-emerald-500/10 border-emerald-500/30 ring-1 ring-emerald-500/20'
+                          : 'bg-[#141414] border-white/10'
+                        }`}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter bg-white/5 px-2 py-0.5 rounded">
+                          {clue.player}
+                        </span>
+                        {clue.status === 'contacted' && (
+                          <div className="flex items-center gap-2 text-emerald-400 font-black text-xl">
+                            {clue.countdown}
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-lg font-medium leading-tight mb-4">{clue.text}</p>
+
+                      <div className="flex gap-2">
+                        {isMaster ? (
                           <form 
-                            onSubmit={(e) => contactClue(clue.id, e)}
+                            onSubmit={(e) => blockClue(clue.id, e)}
                             className="flex-1 flex gap-2"
                           >
                             <input
                               type="text"
                               value={contactInputs[clue.id] || ''}
                               onChange={(e) => updateContactInput(clue.id, e.target.value)}
-                              placeholder="Qual palavra é?"
-                              className="flex-1 min-w-0 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500/50"
+                              placeholder="Adivinhe a palavra..."
+                              className="flex-1 min-w-0 bg-red-900/20 border border-red-500/30 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-red-500/50"
                             />
                             <button 
                               type="submit"
-                              className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-900/20 whitespace-nowrap"
+                              className="bg-red-600/40 hover:bg-red-600/60 text-red-200 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-lg whitespace-nowrap"
                             >
-                              CONTATO!
+                              QUEBRAR
                             </button>
                           </form>
-                        )
+                        ) : (
+                          clue.status === 'pending' && clue.player !== name && (
+                            <form
+                              onSubmit={(e) => contactClue(clue.id, e)}
+                              className="flex-1 flex gap-2"
+                            >
+                              <input
+                                type="text"
+                                value={contactInputs[clue.id] || ''}
+                                onChange={(e) => updateContactInput(clue.id, e.target.value)}
+                                placeholder="Qual palavra é?"
+                                className="flex-1 min-w-0 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500/50"
+                              />
+                              <button
+                                type="submit"
+                                className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-900/20 whitespace-nowrap"
+                              >
+                                CONTATO!
+                              </button>
+                            </form>
+                          )
+                        )}
+                      </div>
+
+                      {clue.status === 'contacted' && (
+                        <p className="text-[10px] text-emerald-400 mt-3 font-medium text-center uppercase tracking-widest animate-pulse">
+                          Contato com {clue.contactPlayer}!
+                        </p>
                       )}
-                    </div>
-                    
-                    {clue.status === 'contacted' && (
-                      <p className="text-[10px] text-emerald-400 mt-3 font-medium text-center uppercase tracking-widest animate-pulse">
-                        Contato com {clue.contactPlayer}!
-                      </p>
-                    )}
-                    {clue.status === 'blocked' && (
-                      <p className="text-[10px] text-red-400 mt-3 font-medium text-center uppercase tracking-widest">
-                        Mestre bloqueou!
-                      </p>
-                    )}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              
-              {gameState.clues.filter(c => c.status !== 'resolved' && c.status !== 'failed').length === 0 && (
-                <div className="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-2xl">
-                  <p className="text-gray-500 text-sm">Nenhuma pista ativa no momento.</p>
+                      {clue.status === 'blocked' && (
+                        <p className="text-[10px] text-red-400 mt-3 font-medium text-center uppercase tracking-widest">
+                          Mestre bloqueou!
+                        </p>
+                      )}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+
+                {gameState.clues.filter(c => c.status === 'pending' || c.status === 'contacted').length === 0 && (
+                  <div className="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-2xl">
+                    <p className="text-gray-500 text-sm">Nenhuma pista ativa no momento.</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          <section className="bg-[#141414]/50 border border-white/5 rounded-2xl p-6 mb-6">
+            <h2 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-4">Palavras Queimadas (Bloqueadas)</h2>
+            <div className="flex flex-wrap gap-2">
+              {gameState.clues.filter(c => c.status === 'blocked').map(c => (
+                <div key={c.id} className="bg-red-900/20 border border-red-500/30 text-red-200 px-3 py-1.5 rounded-lg text-sm flex items-center gap-2">
+                  <Shield size={14} className="text-red-500" />
+                  <span className="font-bold line-through opacity-80">{c.authorWord}</span>
+                  <span className="text-xs opacity-50 ml-1">({c.player})</span>
                 </div>
+              ))}
+              {gameState.clues.filter(c => c.status === 'blocked').length === 0 && (
+                <p className="text-gray-600 text-xs italic">Nenhuma palavra foi bloqueada pelo Mestre ainda.</p>
               )}
             </div>
           </section>
-          )}
 
           {/* Resolved History */}
           <section className="bg-[#141414]/50 border border-white/5 rounded-2xl p-6">
             <h2 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-4">Histórico de Contatos</h2>
             <div className="flex flex-col gap-3">
               {gameState.clues.filter(c => c.status === 'resolved' || c.status === 'failed').map(c => (
-                <div key={c.id} className={`flex flex-col gap-1 border-l-2 pl-3 py-1 ${
-                  c.status === 'resolved' ? 'border-emerald-500/50 text-emerald-100' : 'border-red-500/50 text-red-100'
-                }`}>
+                <div key={c.id} className={`flex flex-col gap-1 border-l-2 pl-3 py-1 ${c.status === 'resolved' ? 'border-emerald-500/50 text-emerald-100' : 'border-red-500/50 text-red-100'
+                  }`}>
                   <p className="text-sm">"{c.text}"</p>
                   <div className="flex gap-2 text-xs opacity-75">
                     <span><strong className="opacity-100">{c.player}</strong>: {c.authorWord}</span>
