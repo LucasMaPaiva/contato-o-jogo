@@ -215,7 +215,7 @@ export default function App() {
                 <h3 className="text-emerald-400 font-bold uppercase tracking-wider text-xs flex items-center gap-2"><Zap size={14} /> Contato!</h3>
                 <p>O jogador envia a pista para que os DEMAIS leiam e tentem pensar na mesma palavra que ele. Quando outro adivinhador acha que sabe a resposta para a pista (ex: descobre que é "Abacaxi"), ele aperta em <strong>CONTATO</strong>!</p>
                 <ul className="list-disc pl-4 space-y-1.5 text-emerald-200/80 marker:text-emerald-500">
-                  <li>Inicia-se uma contagem regressiva de 5 segundos.</li>
+                  <li>Inicia-se uma contagem regressiva de 3 segundos.</li>
                   <li>No final, as palavras dos dois jogadores (o Autor da pista e quem tentou o Contato) são reveladas ao Mestre.</li>
                   <li><strong>Se as palavras baterem</strong>: O Contato foi um SUCESSO! O Mestre é forçado a revelar <strong>mais 1 letra</strong> da sua Palavra Secreta Oficial.</li>
                   <li><strong>Se não baterem</strong>: A pista morre (Falhou), e o Mestre respira aliviado.</li>
@@ -224,7 +224,7 @@ export default function App() {
 
               <div className="bg-red-900/10 p-4 rounded-xl border border-red-500/20 space-y-3 mt-4">
                 <h3 className="text-red-400 font-bold uppercase tracking-wider text-xs flex items-center gap-2"><Shield size={14} /> A Defesa do Mestre</h3>
-                <p>O Mestre entra em desespero quando vê que o grupo deu Contato e os 5 segundos estão rolando. A meta do Mestre é não deixar os jogadores ganharem letras!</p>
+                <p>O Mestre entra em desespero quando vê que o grupo deu Contato e os 3 segundos estão rolando. A meta do Mestre é não deixar os jogadores ganharem letras!</p>
                 <ul className="list-disc pl-4 space-y-1.5 text-red-200/80 marker:text-red-500">
                   <li>Para "Quebrar" o contato, o Mestre deve ler a pista que o Autor deu, e durante o tempo correr para adivinhar qual é ela.</li>
                   <li>Se o Mestre acertar e apertar o botão de Quebrar antes de dar contato, a palavra da pista fica <strong>Queimada/Bloqueada</strong> e ninguém consegue completá-la.</li>

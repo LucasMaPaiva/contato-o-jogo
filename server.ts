@@ -104,7 +104,7 @@ async function startServer() {
             clue.status = 'contacted';
             clue.contactPlayer = contactPlayer.name;
             clue.guessWord = data.guessWord.toUpperCase();
-            clue.countdown = 5;
+            clue.countdown = 3;
             broadcast({ type: "STATE_UPDATE", state: gameState });
 
             // Start countdown
