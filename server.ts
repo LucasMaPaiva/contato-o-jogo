@@ -17,6 +17,7 @@ async function startServer() {
     masterName: "",
     word: "",
     revealedLetters: "",
+    gameStatus: "playing" as "playing" | "won",
     players: [] as { id: string; name: string }[],
     clues: [] as { 
       id: string; 
@@ -59,6 +60,7 @@ async function startServer() {
             gameState.masterName = data.name;
             gameState.word = "";
             gameState.revealedLetters = "";
+            gameState.gameStatus = "playing";
             gameState.clues = [];
             broadcast({ type: "STATE_UPDATE", state: gameState });
           }
@@ -68,13 +70,15 @@ async function startServer() {
           if (gameState.master === id) {
             gameState.word = data.word.toUpperCase();
             gameState.revealedLetters = gameState.word[0];
+            gameState.gameStatus = "playing";
             broadcast({ type: "STATE_UPDATE", state: gameState });
           }
           break;
 
         case "SEND_CLUE":
           const player = gameState.players.find(p => p.id === id);
-          if (player && gameState.master !== id) {
+          const hasActiveClue = gameState.clues.some(c => c.status === 'pending' || c.status === 'contacted');
+          if (player && gameState.master !== id && !hasActiveClue) {
             const newClue = {
               id: Math.random().toString(36).substring(7),
               player: player.name,
@@ -112,9 +116,16 @@ async function startServer() {
                 // Compare the words
                 if (clue.authorWord === clue.guessWord) {
                   clue.status = 'resolved';
-                  // Reveal next letter
-                  if (gameState.revealedLetters.length < gameState.word.length) {
-                    gameState.revealedLetters = gameState.word.substring(0, gameState.revealedLetters.length + 1);
+                  
+                  // Check win condition (word guessed directly or full word revealed)
+                  if (clue.authorWord === gameState.word || gameState.revealedLetters.length + 1 >= gameState.word.length) {
+                     gameState.revealedLetters = gameState.word;
+                     gameState.gameStatus = 'won';
+                  } else {
+                    // Reveal next letter
+                    if (gameState.revealedLetters.length < gameState.word.length) {
+                      gameState.revealedLetters = gameState.word.substring(0, gameState.revealedLetters.length + 1);
+                    }
                   }
                 } else {
                   clue.status = 'failed';
@@ -142,6 +153,7 @@ async function startServer() {
             masterName: "",
             word: "",
             revealedLetters: "",
+            gameStatus: "playing",
             players: gameState.players,
             clues: [],
           };
@@ -157,6 +169,7 @@ async function startServer() {
         gameState.masterName = "";
         gameState.word = "";
         gameState.revealedLetters = "";
+        gameState.gameStatus = "playing";
         gameState.clues = [];
       }
       broadcast({ type: "PLAYER_LEFT", players: gameState.players, master: gameState.master });

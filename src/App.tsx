@@ -19,6 +19,7 @@ type GameState = {
   masterName: string;
   word: string;
   revealedLetters: string;
+  gameStatus: 'playing' | 'won';
   players: Player[];
   clues: Clue[];
 };
@@ -169,6 +170,8 @@ export default function App() {
 
   const isMaster = gameState.master === myId;
   const hasWord = !!gameState.word;
+  const hasActiveClue = gameState.clues.some(c => c.status === 'pending' || c.status === 'contacted');
+  const isWon = gameState.gameStatus === 'won';
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-sans">
@@ -259,16 +262,18 @@ export default function App() {
         {/* Center Column: Game Board */}
         <div className="lg:col-span-2 space-y-6">
           {/* Word Display */}
-          <section className="bg-[#141414] border border-white/10 rounded-2xl p-8 text-center">
-            <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Palavra Revelada</h2>
-            <div className="flex justify-center gap-2">
+          <section className={`border rounded-2xl p-8 text-center transition-all ${isWon ? 'bg-emerald-500/10 border-emerald-500 shadow-xl shadow-emerald-500/20' : 'bg-[#141414] border-white/10'}`}>
+            <h2 className={`text-xs font-bold uppercase tracking-widest mb-6 ${isWon ? 'text-emerald-400' : 'text-gray-500'}`}>
+              {isWon ? '🎉 PALAVRA DESCOBERTA! 🎉' : 'Palavra Revelada'}
+            </h2>
+            <div className="flex justify-center gap-2 flex-wrap pb-4">
               {hasWord ? (
                 gameState.word.split('').map((char, i) => (
                   <div 
                     key={i} 
-                    className={`w-12 h-16 rounded-xl flex items-center justify-center text-3xl font-black border transition-all
+                    className={`w-12 h-16 rounded-xl flex flex-shrink-0 items-center justify-center text-3xl font-black border transition-all
                       ${i < gameState.revealedLetters.length 
-                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' 
+                        ? (isWon ? 'bg-emerald-500 text-black border-transparent scale-110 shadow-lg' : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400')
                         : 'bg-black/40 border-white/5 text-transparent'}`}
                   >
                     {i < gameState.revealedLetters.length ? char : ''}
@@ -278,34 +283,50 @@ export default function App() {
                 <p className="text-gray-500 italic">Aguardando o mestre definir a palavra...</p>
               )}
             </div>
+            {isWon && (
+              <motion.div initial={{opacity:0, y: 10}} animate={{opacity:1, y: 0}} className="mt-8">
+                <p className="text-xl font-bold text-white mb-2">Os adivinhadores venceram!</p>
+                <button 
+                  onClick={resetGame}
+                  className="mt-2 bg-white text-black font-bold px-8 py-3 rounded-xl hover:bg-gray-200 transition-colors"
+                >
+                  Jogar Novamente
+                </button>
+              </motion.div>
+            )}
           </section>
 
           {/* Clues Section */}
-          <section className="space-y-4">
+          {!isWon && (
+            <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
                 <MessageSquare size={14} /> Pistas Ativas
               </h2>
-              {!isMaster && hasWord && (
-                <form onSubmit={sendClue} className="flex gap-2 w-full max-w-lg justify-end">
-                  <input
-                    type="text"
-                    value={clueInput}
-                    onChange={(e) => setClueInput(e.target.value)}
-                    placeholder="Sua dica..."
-                    className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
-                  />
-                  <input
-                    type="text"
-                    value={clueWordInput}
-                    onChange={(e) => setClueWordInput(e.target.value)}
-                    placeholder="Palavra secreta..."
-                    className="w-32 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
-                  />
-                  <button type="submit" className="p-2 bg-emerald-600 rounded-full hover:bg-emerald-500 flex-shrink-0">
-                    <Send size={14} />
-                  </button>
-                </form>
+              {!isMaster && hasWord && !isWon && (
+                !hasActiveClue ? (
+                  <form onSubmit={sendClue} className="flex gap-2 w-full max-w-lg justify-end">
+                    <input
+                      type="text"
+                      value={clueInput}
+                      onChange={(e) => setClueInput(e.target.value)}
+                      placeholder="Sua dica..."
+                      className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
+                    />
+                    <input
+                      type="text"
+                      value={clueWordInput}
+                      onChange={(e) => setClueWordInput(e.target.value)}
+                      placeholder="Palavra secreta..."
+                      className="w-32 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-emerald-500/50"
+                    />
+                    <button type="submit" className="p-2 bg-emerald-600 rounded-full hover:bg-emerald-500 flex-shrink-0">
+                      <Send size={14} />
+                    </button>
+                  </form>
+                ) : (
+                  <p className="text-xs text-yellow-500/80 italic font-medium pr-2">Aguardando resolução do contato em andamento...</p>
+                )
               )}
             </div>
 
@@ -390,6 +411,7 @@ export default function App() {
               )}
             </div>
           </section>
+          )}
 
           {/* Resolved History */}
           <section className="bg-[#141414]/50 border border-white/5 rounded-2xl p-6">
