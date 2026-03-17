@@ -49,6 +49,11 @@ async function startServer() {
 
       switch (data.type) {
         case "JOIN":
+          const nameExists = gameState.players.some(p => p.name.toLowerCase() === data.name.toLowerCase());
+          if (nameExists) {
+            ws.send(JSON.stringify({ type: "ERROR", message: "Nome de usuário já está em uso." }));
+            return;
+          }
           gameState.players.push({ id, name: data.name });
           ws.send(JSON.stringify({ type: "INIT", id, state: gameState }));
           broadcast({ type: "PLAYER_JOINED", players: gameState.players });

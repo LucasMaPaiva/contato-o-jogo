@@ -68,6 +68,13 @@ export default function App() {
             setMyId(data.id);
             setGameState(data.state);
             break;
+          case 'ERROR':
+            setError(data.message);
+            if (data.message === "Nome de usuário já está em uso.") {
+              setIsJoined(false);
+              setWs(null);
+            }
+            break;
           case 'STATE_UPDATE':
             setGameState(data.state);
             break;
@@ -94,6 +101,7 @@ export default function App() {
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
+      setError('');
       setIsJoined(true);
     }
   };
