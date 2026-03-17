@@ -141,7 +141,8 @@ async function startServer() {
         case "BLOCK":
           if (gameState.master === id) {
             const clueToBlock = gameState.clues.find(c => c.id === data.clueId);
-            if (clueToBlock && (clueToBlock.status === 'pending' || clueToBlock.status === 'contacted')) {
+            // Allow blocking only when the clue is still pending. Once a contact starts (contacted), it cannot be interrupted.
+            if (clueToBlock && clueToBlock.status === 'pending') {
               const masterGuess = data.masterGuess.toUpperCase();
               
               if (masterGuess === clueToBlock.authorWord) {

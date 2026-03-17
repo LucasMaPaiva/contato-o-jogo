@@ -536,24 +536,30 @@ export default function App() {
 
                       <div className="flex gap-2">
                         {isMaster ? (
-                          <form 
-                            onSubmit={(e) => blockClue(clue.id, e)}
-                            className="flex-1 flex gap-2"
-                          >
-                            <input
-                              type="text"
-                              value={contactInputs[clue.id] || ''}
-                              onChange={(e) => updateContactInput(clue.id, e.target.value)}
-                              placeholder="Adivinhe a palavra..."
-                              className="flex-1 min-w-0 bg-red-900/20 border border-red-500/30 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-red-500/50"
-                            />
-                            <button 
-                              type="submit"
-                              className="bg-red-600/40 hover:bg-red-600/60 text-red-200 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-lg whitespace-nowrap"
+                          clue.status === 'pending' ? (
+                            <form 
+                              onSubmit={(e) => blockClue(clue.id, e)}
+                              className="flex-1 flex gap-2"
                             >
-                              QUEBRAR
-                            </button>
-                          </form>
+                              <input
+                                type="text"
+                                value={contactInputs[clue.id] || ''}
+                                onChange={(e) => updateContactInput(clue.id, e.target.value)}
+                                placeholder="Adivinhe a palavra..."
+                                className="flex-1 min-w-0 bg-red-900/20 border border-red-500/30 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-red-500/50"
+                              />
+                              <button 
+                                type="submit"
+                                className="bg-red-600/40 hover:bg-red-600/60 text-red-200 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-lg whitespace-nowrap"
+                              >
+                                QUEBRAR
+                              </button>
+                            </form>
+                          ) : (
+                            <div className="flex-1 text-center text-xs text-yellow-500/70 font-medium py-2">
+                               Tarde demais para quebrar! Contato em andamento.
+                            </div>
+                          )
                         ) : (
                           clue.status === 'pending' && clue.player !== name && (
                             <form
