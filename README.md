@@ -50,6 +50,13 @@ make logs
 make down
 ```
 
+> [!TIP]
+> O fluxo usa perfis do Docker Compose. Defina `PROFILE` (`local`, `dev`, `hml` ou `prod`) no `.env` ou diretamente no comando:
+> ```bash
+> PROFILE=prod make up   # conecta no proxy manager (rede externa)
+> PROFILE=local make up  # usa apenas a rede padrão local
+> ```
+
 ## 🔐 Segurança e HTTPS
 
 Este projeto foi desenhado para rodar atrás de um **Proxy Reverso** (ex: Nginx Proxy Manager). O Dockerfile utiliza uma build multi-stage que gera os arquivos estáticos e os serve através de um servidor Nginx otimizado, configurado para suportar roteamento de SPA (Single Page Application).
