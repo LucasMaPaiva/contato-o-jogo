@@ -1,97 +1,58 @@
-# 🎮 Contato - O Jogo
+# Contato - O Jogo 🎮
 
-**Um jogo cooperativo de adivinhação em tempo real.**
-</div>
+Este é o frontend do jogo **Contato**, desenvolvido em React com TypeScript e Vite. Agora ele opera de forma totalmente independente da API e é servido via **Nginx** em ambiente de produção (Docker).
 
----
+## 🚀 Tecnologias
 
-## 📝 Sobre o Projeto
+- **Framework**: React / Vite
+- **Linguagem**: TypeScript
+- **Estilização**: CSS Modules / Lucide React (Ícones)
+- **Servidor de Produção**: Nginx (Build multi-stage)
+- **Infraestrutura**: Docker & Docker Compose
 
-O **Contato** é uma implementação digital do clássico jogo de palavras de mesmo nome. É um jogo que desafia a agilidade mental, o vocabulário e a sincronia entre os jogadores. Esta versão foi construída para oferecer uma experiência fluida, moderna e totalmente em tempo real.
+## 🏗️ Estrutura do Projeto
 
-### 💡 Visão Técnica
-O projeto adota uma arquitetura **reativa e orientada a eventos**:
-- **Tempo Real**: Comunicação bidirecional via WebSockets para atualizações instantâneas de estado entre todos os jogadores.
-- **Estado Global**: Sincronizado pelo servidor e refletido no frontend através de hooks customizados.
-- **Design Moderno**: Interface construída com React 19 e estilizada com Tailwind CSS 4 para máxima performance e estética.
+- **`src/components/`**: Componentes reutilizáveis da interface.
+- **`src/hooks/`**: Hooks customizados (incluindo o `useGameSocket`).
+- **`src/types/`**: Definições de tipos para o domínio do jogo.
+- **`.docker/`**: Arquivos de configuração do Docker e Nginx.
 
-## 🕹️ Como Jogar
+## ⚙️ Configuração (Ambiente)
 
-O jogo divide os participantes em dois papéis: o **Mestre** e os **Adivinhadores**.
+O frontend utiliza variáveis de ambiente para se conectar à API. Crie um arquivo `.env` na raiz:
 
-### 👑 O Mestre
-1. O Mestre escolhe uma **Palavra Secreta**.
-2. O objetivo do Mestre é evitar que os Adivinhadores descubram a palavra.
-3. Ele pode **Bloquear** as pistas dos jogadores se conseguir adivinhar a palavra da pista antes do "Contato".
+```env
+VITE_API_URL=wss://api.contato-o-jogo.site
+```
 
-### 💡 Os Adivinhadores
-1. Devem sugerir palavras-pista que **começam com as mesmas letras já reveladas** da Palavra Secreta.
-2. Exemplo: Se a palavra é `AMIZADE` e apenas `A` foi revelado, um jogador pode dar a pista "Fruta ácida e amarela" (referindo-se a `ABACAXI`).
+> [!IMPORTANT]
+> Em produção com HTTPS, utilize sempre o protocolo `wss://`.
 
-### 🔥 O "Contato!"
-- Quando outro adivinhador acha que sabe a resposta para uma pista, ele clica em **CONTATO**!
-- Uma contagem regressiva de 1 segundo se inicia.
-- Se ambos (autor da pista e quem deu contato) estiverem pensando na mesma palavra, o Mestre é forçado a revelar **mais uma letra** da Palavra Secreta.
-- Se o Mestre adivinhar a palavra da pista antes do contato terminar, ele clica em **QUEBRAR** e a pista é anulada.
+## 📦 Como Rodar
 
----
+### Desenvolvimento Local (Node)
+```bash
+npm install
+npm run dev
+```
 
-## 🚀 Tecnologias Utilizadas
+### Produção (Docker + Nginx)
+Utilize o **Makefile** para gerenciar o container:
 
-Este projeto utiliza uma stack moderna e performática:
+```bash
+# Iniciar o frontend via Nginx
+make up
 
-- **Frontend**: [React 19](https://react.dev/) + [Vite](https://vitejs.dev/)
-- **Estilização**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **Backend**: [Node.js](https://nodejs.org/) com [Express](https://expressjs.com/)
-- **Real-time**: [WebSockets (ws)](https://github.com/websockets/ws)
-- **Animações**: [Framer Motion](https://www.framer.com/motion/)
-- **Ícones**: [Lucide React](https://lucide.dev/)
-- **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
+# Ver logs do Nginx
+make logs
 
----
+# Parar o serviço
+make down
+```
 
-## 🛠️ Configuração e Instalação
+## 🔐 Segurança e HTTPS
 
-### Pré-requisitos
-- Node.js (v18 ou superior)
-- npm ou yarn
-
-### Passo a Passo
-
-1. **Clonar o repositório**
-   ```bash
-   git clone [url-do-repositorio]
-   cd contato-o-jogo
-   ```
-
-2. **Instalar dependências**
-   ```bash
-   npm install
-   ```
-
-3. **Configuração de Ambiente**
-   Crie um arquivo `.env.local` na raiz do projeto (ou use o `.env.example` como base):
-   ```bash
-   GEMINI_API_KEY="sua_chave_aqui"
-   ```
-   *Nota: A chave Gemini é necessária para futuras integrações de IA no jogo.*
-
-4. **Rodar em modo de desenvolvimento**
-   ```bash
-   npm run dev
-   ```
-   O servidor iniciará em `http://localhost:3000`.
+Este projeto foi desenhado para rodar atrás de um **Proxy Reverso** (ex: Nginx Proxy Manager). O Dockerfile utiliza uma build multi-stage que gera os arquivos estáticos e os serve através de um servidor Nginx otimizado, configurado para suportar roteamento de SPA (Single Page Application).
 
 ---
-
-## 📂 Estrutura do Projeto
-
-- `/src`: Contém todo o código do React (componentes, hooks, estilos).
-- `/server`: Implementação do servidor Express e lógica dos WebSockets.
-- `/public`: Ativos estáticos.
-
----
-
-<div align="center">
-Desenvolvido com ❤️ para amantes de jogos de palavras.
-</div>
+Desenvolvido por Antigravity 🤖
