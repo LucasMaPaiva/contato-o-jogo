@@ -1,17 +1,27 @@
+x-frontend-service: &frontend-base
+  build:
+    context: .
+    dockerfile: .docker/Dockerfile
+  # ports:
+  #   - "3000:3000"
+  env_file:
+    - .env
+  environment:
+    - VITE_API_URL=${VITE_API_URL:-ws://localhost:3001}
+  restart: unless-stopped
+
 services:
   frontend:
-    build:
-      context: .
-      dockerfile: .docker/Dockerfile
-    # ports:
-    #   - "3000:3000"
+    <<: *frontend-base
+    profiles: ["local", "dev", "hml"]
+    ports:
+      - "3000:3000"
+
+  frontend-proxy:
+    <<: *frontend-base
+    profiles: ["prod"]
     networks:
       - proxy_network
-    env_file:
-      - .env
-    environment:
-      - VITE_API_URL=${VITE_API_URL:-ws://localhost:3001}
-    restart: unless-stopped
 
 networks:
   proxy_network:
