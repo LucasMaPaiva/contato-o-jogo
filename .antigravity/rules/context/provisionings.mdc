@@ -1,0 +1,226 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Máquina de Estados dos Provisionings - Locaweb
+
+> **Documentação completa do funcionamento da máquina de estados dos provisionings da Locaweb. Os provisionings são identificadores únicos associados aos produtos e acompanham todo o ciclo de vida desses produtos.**
+
+---
+
+## 🔄 Estados e Transições
+
+### **0 - Waiting Approval**
+- Estado inicial em que o produto aguarda aprovação para compra.
+- Transições possíveis:
+  - **Compra aprovada?**
+    - **Sim**: Transita para o estado **1 - Waiting Payment**.
+    - **Não**: Transita para o estado **17 - Denied**.
+
+---
+
+### **1 - Waiting Payment**
+- Estado em que o sistema aguarda o reconhecimento do pagamento pelo SAP.
+- Transições possíveis:
+  - **SAP reconhece pagamento?**
+    - **Sim**: Transita para o estado **16 - Installable**.
+    - **Não** (timeout de 2 dias sem pagamento): Transita para o estado **9.0 - Cancelled**.
+
+---
+
+### **16 - Installable**
+- Indica que o produto está pronto para ser instalado.
+- Transições possíveis:
+  - **Instalável manualmente?**
+    - **Não**: Transita para o estado **2.1 - Waiting Installation**.
+    - **Sim**: Transita para o estado **3 - Activating**.
+
+---
+
+### **2.1 - Waiting Installation**
+- Aguarda que os times internos de suporte técnico iniciem a instalação do produto.
+- Transições possíveis:
+  - **Time inicia instalação?**
+    - **Sim**: Transita para o estado **3 - Activating**.
+    - **Não**: Transita para o estado **9.6 - Cancelled**.
+
+---
+
+### **3 - Activating**
+- Representa um estado intermediário em que o produto está sendo ativado.
+- Transições possíveis:
+  - **Time confirma instalação**: Transita para o estado **4 - Active**.
+
+---
+
+### **4 - Active**
+- O produto está ativo e disponível para uso pelo cliente.
+- Transições possíveis:
+  - **Desativação solicitada**:
+    - Solicitada pelo **cliente**: Transita para o estado **6.2 - Waiting Deactivation**.
+    - Solicitada pela **área técnica**: Transita para o estado **6.3 - Waiting Deactivation**.
+    - Motivo de **abuso**: Transita para o estado **6.4 - Waiting Deactivation**.
+  - **Migração solicitada**: Transita para o estado **Migrations**.
+
+---
+
+### **6.x - Waiting Deactivation**
+- Representa o status de espera antes da desativação, com variações dependendo do motivo:
+  - **6.1 - Waiting Deactivation**: SAP não identificou o pagamento.
+  - **6.2 - Waiting Deactivation**: Desativação solicitada pelo cliente.
+  - **6.3 - Waiting Deactivation**: Desativação solicitada pela área técnica.
+  - **6.4 - Waiting Deactivation**: Desativação por abuso.
+- Transições possíveis:
+  - **Time inicia desativação**:
+    - Transita para o estado correspondente de desativação (**7.1, 7.2, 7.3 ou 7.4**).
+
+---
+
+### **7.x - Deactivating**
+- Representa o status de ativação em progresso, com possíveis estados de transição, dependendo da origem da desativação:
+  - **7.1 - Deactivating**: SAP (15 dias após o vencimento).
+  - **7.2 - Deactivating**: Cliente.
+  - **7.3 - Deactivating**: Área técnica.
+  - **7.4 - Deactivating**: Abuso.
+- Transições possíveis:
+  - Quando concluída, transita para o estado **8.x - Deactivated** correspondente.
+
+---
+
+### **8.x - Deactivated**
+- Representa o estado desativado:
+  - **8.1 - Deactivated**: SAP.
+  - **8.2 - Deactivated**: Cliente.
+  - **8.3 - Deactivated**: Área técnica.
+  - **8.4 - Deactivated**: Abuso.
+- Transições possíveis:
+  - **Cliente solicita reativação**: Transita para o estado **2.3 - Waiting Reactivation** (suporte ou cliente iniciam reativação).
+
+---
+
+### **2.3 - Waiting Reactivation**
+- Aguardando a reativação do produto.
+- Transições possíveis:
+  - **Time inicia reativação**: Transita para o estado **3 - Activating**.
+
+---
+
+### **10.1 - Waiting Deletion**
+- Estado que aguarda a exclusão definitiva do produto.
+- Transições possíveis:
+  - **Time inicia exclusão**: Transita para o estado **11 - Deleting**.
+
+---
+
+### **11 - Deleting**
+- Ocorre quando o processo de exclusão definitiva é iniciado.
+- Transições possíveis:
+  - Exclusão concluída: Transita para o estado **12 - Deleted**.
+
+---
+
+### **12 - Deleted**
+- Estado final em que o produto foi excluído permanentemente.
+
+---
+
+### **17 - Denied**
+- Ocorre quando a compra não é aprovada pelo sistema.
+
+---
+
+### **9.x - Cancelled**
+- Representa a transição em que o provisioning é cancelado:
+  - **9.0**: Timeout devido à falta de pagamento.
+  - **9.5**: Compra cancelada.
+  - **9.6**: O time não conseguiu concluir a instalação.
+
+---
+
+### Nota sobre Feeds do SAP
+Alguns estados (marcados como eventos do SAP) são processados automaticamente pelo sistema SAP e pelos provisioning workers.
+
+---
+
+## Fluxo Principal
+
+1.  **waiting approval:** O provisionamento aguarda aprovação inicial. Este estado pode estar relacionado a processos de anti-fraude na compra.
+
+    *   Se a compra é aprovada, o provisionamento segue para o próximo passo. Caso contrário, vai para `denied`.
+
+2.  **waiting payment:** O provisionamento aguarda a confirmação do pagamento. O sistema SAP (após reconhecimento do pagamento) atualiza este estado.
+
+    *   Se o pagamento não for confirmado ou houver um problema na instalação, o provisionamento pode ser `cancelled`.
+
+3.  **waiting activation:** O provisionamento aguarda o início da ativação. O estado pode ser alcançado por processos automáticos (instalação) ou manual.
+
+    * Se a instalação não for possível, o provisionamento pode ser `cancelled`.
+
+4.  **activating:** O provisionamento está em processo de ativação.
+
+5.  **active:** O provisionamento está ativo e em uso.
+
+---
+
+## Desativação
+
+A partir do estado `active`, o provisionamento pode entrar no processo de desativação, que pode ser originado por diferentes motivos:
+
+*   Solicitação do cliente
+*   Área técnica
+*   Abuso
+*   Não identificação de pagamento pelo SAP (após um período do vencimento)
+
+O fluxo de desativação é semelhante para todos os casos:
+
+1.  **waiting deactivation:** O provisionamento aguarda o início do processo de desativação.
+2.  **deactivating:** O provisionamento está em processo de desativação.
+3.  **deactivated:** O provisionamento foi desativado.
+
+---
+
+## Reativação
+
+Um provisionamento `deactivated` pode ser reativado:
+
+1.  **waiting reactivation:** O provisionamento aguarda o início do processo de reativação.
+2.  **activating:** O provisionamento está em processo de ativação.
+3.  **active:** O provisionamento está ativo e em uso.
+
+---
+
+## Deleção
+
+Em algum momento, um provisionamento pode ser deletado do sistema:
+
+1.  **waiting deletion:** O provisionamento aguarda o início do processo de deleção.
+2.  **deleting:** O provisionamento está em processo de deleção.
+3.  **deleted:** O provisionamento foi deletado.
+
+---
+
+## Estados Finais
+
+*   **cancelled:** O provisionamento foi cancelado. Este estado pode ser atingido a partir de vários pontos do fluxo, como falha no pagamento, problemas na instalação ou cancelamento direto.
+*   **denied:** A solicitação de provisionamento foi negada.
+*   **deleted:** O provisionamento foi deletado.
+*   **installable:** O provisionamento está pronto para ser instalado.
+
+---
+
+## Informações Adicionais
+
+*   O processo de *migrations* parece estar relacionado à transição de um provisionamento `active` para outro estado ou sistema.
+*   O processo de *cancellations* pode ocorrer em vários pontos do ciclo de vida do provisionamento.
+*   Os labels em laranja representam os feeds do SAP que são processados pelos provisioning workers.
+
+---
+
+## Considerações Finais
+Esta máquina de estados foi criada para oferecer uma visão clara de todo o ciclo de vida dos produtos da Locaweb, do momento da compra até sua desativação ou exclusão. Sua lógica permite identificar com precisão cada etapa e agir de forma eficiente conforme o status de cada produto.

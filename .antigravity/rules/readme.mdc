@@ -1,0 +1,129 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# README Generator - Generic Version
+
+> Gera um arquivo `docs/README.md` como porta de entrada amigável para a documentação da aplicação.
+
+## 🎯 Objetivo
+
+Criar um README que seja:
+- **Porta de entrada** para toda documentação  
+- **Fácil de entender** por qualquer pessoa (técnica ou não)
+- **Quick start funcional** para desenvolvedores
+- **Navegação clara** para documentos detalhados
+
+---
+
+## 📋 Template de Referência
+
+Use como base o template completo: [readme-template.md](mdc:.cursor/rules/templates/readme-template.mdc)
+
+**Substitua os placeholders `[...]` com informações reais da aplicação.**
+
+---
+
+## 🔍 Como Preencher o Template
+
+### 1. **Informações Básicas - Detectar Automaticamente:**
+- **Nome**: Diretório atual, `package.json`, `Gemfile`, `composer.json`, `pom.xml`
+- **Descrição**: README existente, comentários no código principal, documentation
+- **URL do repo**: `git remote -v` ou configuração local
+- **Versão**: `package.json`, `Gemfile`, arquivos de configuração
+
+### 2. **Stack Técnico - Analisar Arquivos:**
+
+**Ruby/Rails:**
+- `Gemfile` → Versão Ruby/Rails, dependências principais
+- `config/application.rb` → Nome da aplicação
+- `config/routes.rb` → Principais rotas/funcionalidades
+- `config/puma.rb` → Configuração do servidor
+- Porta padrão: 3000
+
+**Node.js:**
+- `package.json` → Versão Node, scripts, dependências
+- `app.js`/`server.js`/`index.js` → Entry points
+- `package.json` scripts → Comandos disponíveis
+- Porta padrão: 3000/8080
+
+**Python:**
+- `requirements.txt` ou `pyproject.toml` → Dependências
+- `manage.py` → Django | `app.py`/`main.py` → Flask/FastAPI
+- `settings.py` → Configurações Django
+- Porta padrão: 8000/5000
+
+**Java:**
+- `pom.xml` ou `build.gradle` → Dependências e configuração
+- `application.properties` → Configurações Spring Boot
+- Porta padrão: 8080
+
+**PHP/Laravel:**
+- `composer.json` → Dependências PHP
+- `artisan` → Laravel CLI
+- `.env.example` → Configurações de ambiente
+- Porta padrão: 8000
+
+**C#/.NET:**
+- `*.csproj` → Configurações do projeto
+- `Program.cs` → Entry point
+- `appsettings.json` → Configurações
+- Porta padrão: 5000/7000
+
+### 3. **Docker/Containerização:**
+- `docker-compose.yml` → Serviços, portas, dependências
+- `Dockerfile` → Como a aplicação é construída
+- Scripts `script/`, `bin/`, `make` → Comandos de desenvolvimento
+
+### 4. **Funcionalidades - Analisar Código:**
+- **Rotas**: Controllers, APIs principais, endpoints
+- **Models**: Principais entidades do negócio
+- **Views**: Páginas principais da aplicação
+- **APIs**: Endpoints mais importantes
+- **Serviços**: Classes de business logic
+
+### 5. **Configurações de Ambiente:**
+- `.env.example` → Variáveis de ambiente necessárias
+- `config/` → Configurações por ambiente
+- Arquivos de CI/CD → Pipeline e deploy
+
+---
+
+## ✅ Validação Final
+
+Verificar se o README gerado tem:
+
+**✅ Estrutura Completa:**
+- [ ] Cabeçalho com nome e descrição clara
+- [ ] Navegação para outros documentos
+- [ ] Seção "Sobre a Aplicação" preenchida
+- [ ] Stack técnico identificado corretamente
+- [ ] Quick start funcional testável
+- [ ] Informações de contato/suporte
+
+**✅ Qualidade do Conteúdo:**
+- [ ] Linguagem acessível para não-técnicos
+- [ ] Informações técnicas suficientes para desenvolvedores
+- [ ] Links internos corretos e funcionais
+- [ ] Comandos Docker/setup funcionam
+- [ ] Portas e URLs corretas
+- [ ] Badges de tecnologia relevantes
+
+**✅ Usabilidade:**
+- [ ] Uma pessoa nova consegue entender o propósito em 30 segundos
+- [ ] Um desenvolvedor consegue rodar a aplicação seguindo o quick start
+- [ ] Navegação para documentação detalhada é clara e direta
+
+---
+
+## 📁 IMPORTANTE: Nomenclatura do Arquivo
+
+**SEMPRE salve como:** `docs/README.md` (README em maiúsculas)
+
+- ✅ **README.md** - Padrão universal GitHub/GitLab
+- ❌ readme.md - Incorreto (minúsculas)
+
+---
+
+**📌 Lembre-se:** O README é a **primeira impressão** da aplicação. Deve ser acolhedor, informativo e funcional. Use o template como guia, mas adapte para a realidade específica de cada aplicação.

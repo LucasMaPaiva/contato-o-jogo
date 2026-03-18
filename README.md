@@ -9,6 +9,12 @@
 
 O **Contato** é uma implementação digital do clássico jogo de palavras de mesmo nome. É um jogo que desafia a agilidade mental, o vocabulário e a sincronia entre os jogadores. Esta versão foi construída para oferecer uma experiência fluida, moderna e totalmente em tempo real.
 
+### 💡 Visão Técnica
+O projeto adota uma arquitetura **reativa e orientada a eventos**:
+- **Tempo Real**: Comunicação bidirecional via WebSockets para atualizações instantâneas de estado entre todos os jogadores.
+- **Estado Global**: Sincronizado pelo servidor e refletido no frontend através de hooks customizados.
+- **Design Moderno**: Interface construída com React 19 e estilizada com Tailwind CSS 4 para máxima performance e estética.
+
 ## 🕹️ Como Jogar
 
 O jogo divide os participantes em dois papéis: o **Mestre** e os **Adivinhadores**.

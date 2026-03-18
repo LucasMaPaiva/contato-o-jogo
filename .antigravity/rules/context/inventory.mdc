@@ -1,0 +1,377 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Inventário de Aplicações - Locaweb
+
+> **Inventário completo de aplicações, repositórios e gems da Locaweb para mapeamento de dependências e integrações entre sistemas.**
+
+## 📋 Como Usar
+
+Quando mapear as aplicações, leve em consideração esse inventário.
+
+## 📝 Explicação das Colunas
+
+- **Squad**: Squad que cuida do produto
+- **Application**: nome da aplicação, sendo o mesmo nome do repositório
+- **Solução/Produto**: nome da solução ou produto
+- **Tipo de repositório**: Classificação técnica do repositório
+- **Descrição**: Descrição funcional da aplicação
+
+## 🔧 Tipos de Repositório Comuns
+
+- **Notifications**: são os templates de email de cada produto, que são publicados de forma centralizada na aplicação `notifications` do time de SisCorp
+- **Assets**: são os assets de cada produto, sendo arquivos estáticos que são publicados no servidor de `assets` compartilhado. cada produto tem um diretório específico nesse servidor que apenas serve os arquivos estáticos.
+
+---
+
+## 📊 Inventário Completo
+
+> Cada linha se refere a um repositório. Cada linha pode ser um tipo de repositório.
+
+|Squad|Application|Solução/Produto|Tipo de repositório|Descrição|
+|--|--|--|--|--|
+|Canais Digitais|site-locaweb-cms|Site|Web / PHP / VueJs|Website público da Locaweb. |
+|Canais Digitais|assets|Site|Assets|PDFs do ambiente Locaweb|
+|Canais Digitais|site-central-do-cliente|Central do Cliente|Web / VueJs|Nova Central do Cliente - Painel|
+|Canais Digitais|central-bff|Central do Cliente|API Rails|Nova Central do Cliente - BFF|
+|Canais Digitais|customer-workbench|Central do Cliente|MVC|Central do Cliente - Legada|
+|Cegonha|Professor​|Cegonha|Aplicação|Aplicação que entrega mensagens XMPP para VLain e NetLZ quando uma interface de rede é adicionada para uma máquina no Cegonha|
+|Cegonha|cegonha_client|Cegonha|GEM|Client que possibilita acessar informaçóes do Cegonha|
+|Cegonha|ops_panel|Cegonha|GEM|Engine do Cegonha que monta um dashboard de histórico de movimentações dos IC's cadastrados no Cegonha|
+|Cegonha|cegonha|Cegonha|Aplicação|Aplicação responsável pelo gerenciamento de Itens de configuração (IC's) e de gerencimento de IP's da Locaweb |
+|Cloud|assets-iaas|Cloud/VPS|Assets|Repositório que armazena os assets de Cloud, como imagens e scripts de configuração de IP adicional e Agente de backup que ficam disponíveis em assets.locaweb.com.br.|
+|Cloud|boromir|Cloud/VPS|API|Aplicação responsável por gerenciar o produto VMware.|
+|Cloud|cloud_si_common|Cloud/VPS|Gem|Gem que abstrai chamadas para o antigo sistemas de clientes SI.|
+|Cloud|cloud-core|Cloud/VPS|Gem|Gem que contém os modelos e diversos processos usados no provisionamento e uso de máquinas virtuais, ou seja, os produtos da Locaweb VPS, Hospedagem VPS, CPro e CloudHosting. É usada pela iaas-cloud-api e pelo nephelae. O conjunto dessas três aplicações é chamado de 'triade do mal'.|
+|Cloud|dbaas|DBaaS|MVC|Aplicação responsável por gerenciar o produto DBaaS.|
+|Cloud|dracula|Cloud/VPS|Aplicação|Antigo projeto para gerenciar infraestrutura de backup. Aplicação intermediária que fornece uma API REST para se comunicar com o Bacula via CLI, atuando como ponte entre a iaas-backup-api e o sistema de backup.|
+|Cloud|ficha-dedicado-sys2|Cloud/VPS|Ficha|Aplicação responsável pelas fichas de servidores dedicados. Usada pelo time de Corp para gerar fichas de contratação de Servidores Dedicados, que posteriormente são enviadas ao Checkout e finalizadas no Vendas Corp.|
+|Cloud|frank|Cloud/VPS|Aplicação|"Responsável pela product-api do produto.|
+|Cloud|iaas_api_client|Cloud/VPS|Gem|Gem que abstrai chamas para a antiga iaas-panel.|
+|Cloud|iaas-backup-api|Cloud/VPS|API Rails|Aplicação responsável por gerenciar o produto de Backup.|
+|Cloud|iaas-clientvlan-api|Cloud/VPS|API Rails|Aplicação responsável por gerenciar a funcionalidade de VLAN para CPro.|
+|Cloud|iaas-cloud-api|Cloud/VPS|API Rails|Principal aplicação de Cloud. Responsável pelo gerenciamento e provisionamento dos produtos VPS, VPS KingHost, VPS Host (controle é feito pelo time de hospedagem) e VPS Revenda (controle é feito pelo time de revenda) e de algumas funcionalidades do produto CPro.|
+|Cloud|iaas-dedicated-api|Servidores Dedicados|API Rails|Aplicação responsável pelo produto Servidor Dedicado|
+|Cloud|iaas-docs|Cloud/VPS|Docs|Repositório de documentações (arquivado, documentação migrada para a wiki de Cloud).|
+|Cloud|iaas-loadbalancer-api|Cloud/VPS|API Rails|Aplicação responsável por gerenciar a funcionalidade de Load Balancer para CPro. Essa funcionalidade não está mais em uso.|
+|Cloud|iaas-notifications-api|Cloud/VPS|Notifications|Aplicação responsável pelo envio de algumas notificações de Cloud. Não está mais em uso.|
+|Cloud|iaas-panel|Cloud/VPS|MVC|Antigo painel de servidores. Não está mais em uso.|
+|Cloud|iaas-report|Cloud Server Pro|MVC|Aplicação responsável pelo report e pedido de cobrança do uso de algumas funcionalidades, como escalabilidade e snapshots adicionais para CPro. Não está gerando relatórios desde 10/2020.|
+|Cloud|iaas-service-checker|Cloud/VPS|Gem|Gem responsável por abstrair as queries e lógica para coleta de métricas de uso das máquinas virtuais para construção de gráfico no painel servidores.|
+|Cloud|iapis|API Cloud/VPS|Gem|Gem usada pela iaas-cloud-api e nephelae para prover autenticação, autorização, localização e algumas ações padronizadas no uso de servidores|
+|Cloud|jelastic-product-api|Jelastic|API Rails|API do produto Jelastic descontinuado, usada para expor dados como nome e URL.|
+|Cloud|nephelae|Cloud/VPS|MVC|Segunda principal aplicação de Cloud. Responsável pelo provisionamento e gerenciamento de servidores CPro e internos e também por algumas funcionalidades de VPS.|
+|Cloud|notifications-templates-iaas|Cloud/VPS|Notifications|Repositório com os templates de e-mail dos produtos de Cloud.|
+|Cloud|object-storage|Object Storage|Aplicação|Aplicação responsável pelo painel e provisionamento do produto Object Storage, que interage com outra aplicação para receber o feed de provisionamento. Produto legado mantido apenas para a base ativa, sem novas vendas ou features.|
+|Cloud|object-storage-provisioner|Object Storage|Aplicação|Aplicação responsável por receber e processar feeds de provisionamento e integrações com a product-api do produto Object Storage.|
+|Cloud|openstack_client|Open Stack|Gem||
+|Cloud|openstack-billing|Open Stack|MVC|"Aplicação interna que coleta e consolida métricas de uso de recursos no OpenStack, para fins de cobrança pós-paga.|
+|Cloud|vnc-gateway|Cloud/VPS|Aplicação|Gateway para possibilitar o acesso às máquinas virtuais pelo console web, através do painel servidores.|
+|Cloud|cloud-panel|Cloud/VPS|VueJs|Atual painel de servidores para gerenciamento de VPS, CPro, Dedicados e VMware (legado).|
+|Cloud|cloud-panel-bff|Cloud/VPS|API Rails|BFF para o painel de servidores.|
+|Cloud|assets-locawatch|Monitoramento de Servidores|Assets||
+|Cloud|notifications-templates-locawatch|Monitoramento de Servidores|Notifications||
+|Commons|sys20-session-handlers||Gem||
+|Commons|cas_saas||Gem||
+|Commons|faraday_cassette||Gem||
+|Commons|heartcheck-newrelic||Gem||
+|Commons|leela_reader||Gem||
+|Commons|localog||Gem||
+|Commons|metrux||Gem||
+|Commons|registro_services_client||Gem||
+|Commons|scripts_internos_client||Gem||
+|Commons|snitching||Gem||
+|Commons|ws_authentication_client||Gem||
+|Commons|ws_dns||Gem||
+|Commons|ws_provisioning_client||Gem||
+|Criador|carts|Criador de Sites|SPA|[DEPRECADO] Serviço de carrinho de compras no contexto de criador-de-sites.|
+|Criador|criador-de-sites|Criador de Sites|MVC|Painel de administração do produto Criador de Sites.|
+|Criador|criador-de-sites-api|Criador de Sites|API|Disponibiliza endpoints para verificar compatibilidade entre provisões de hospedagem e o Criador de Sites.|
+|Criador|criador-de-sites-models|Criador de Sites|Gem||
+|Criador|criador-handbook|Criador de Sites|Docs|[DEPRECADO] Documentações no escopo criador de sites|
+|Criador|criador-panel|Criador de Sites|SPA|[DEPRECADO] Interface administrativa que se integra com serviços de backend como "Yata Apix" (via WebSocket) e "Yata Store" (via HTTP) para gerenciar sites, configurações de envio e autenticação de usuários.|
+|Criador|ex-image-uploader|Criador de Sites|Gem||
+|Criador|yata-admin|Criador de Sites|MVC|Disponibiliza um painel administrativo para o time de desenvolvimento e a equipe de suporte.|
+|Criador|yata-api|Criador de Sites|API|API com toda a base de dados dos templates e widgets usados na edição dos sites através do editor.|
+|Criador|yata-apix|Criador de Sites|API|Compõe o back-end do editor do criador-de-sites, conjuntamente com o yata-api.|
+|Criador|yata-editor|Criador de Sites|SPA|Editor visual de sites que permite criação e customização de páginas web através de interface drag-and-drop com widgets, temas e integrações com e-commerce.|
+|Criador|yata-publisher|Criador de Sites|API|Serviço responsável por processar conteúdo do Yata Editor e publicar estruturas de sites para o Criador de Sites, transformando dados do editor em sites web publicáveis.|
+|Criador|yata-sites|Criador de Sites|FullStack |Renderiza sites criados pelos usuários, gerencia certificados SSL via Let's Encrypt, processa formulários de contato com envio de emails, integra com loja virtual (produtos e carrinhos), e utiliza Redis para cache e RabbitMQ para processamento de filas de publicação.|
+|Criador|yata-store|Criador de Sites|FullStack |Aplicação que gerencia lojas virtuais, processando carrinhos de compra, integrando com gateway de pagamento Yapay para checkout, controlando estoque de produtos e enviando notificações por email quando níveis de estoque são críticos.|
+|Design-System|cypress-wrapper|Design System||Wrapper para o cypress, com as configurações base do Cucumber|
+|Design-System|design-system|Design System||Design System Vue Js da locaweb|
+|Design-System|design-system-cli|Design System||deprecated|
+|Design-System|design-system-doc|Design System||deprecated|
+|Design-System|design-system-icons|Design System||Lib de icones para o design system|
+|Design-System|design-system-wordpress|Design System||deprecated|
+|Design-System|gherkin-parse|Design System||Parse de arquivos .feature para cucumber com cypress|
+|Design-System|task-tracker|Design System||deprecated|
+|DX|devops-agent-installer|Scripts DevOps|Scripts||
+|DX|devops-agent-scripts|Scripts DevOps|Scripts||
+|DX|pipeline-templates|Scripts DevOps|Scripts||
+|Email|controller2-locamail|Email Locaweb|MVC|Product-API dedicada do ambiente antigo, responsável por realizar upgrade, downgrade, e refletir no produto as alterações de contrato|
+|Email|dovecotie|Email Locaweb|API|API de gerenciamento da Dovecot (IMAP Server), gerencia domínios, alias, caixas postais, encaminhamentos|
+|Email|dovecotie-client|Email Locaweb|Gem|Rubygem client de API da dovecotie|
+|Email|email-api|Email Locaweb|API|API de gerenciamento do serviço de email, abriga regra de negócios e a coordena os sistemas envolvidos nas ações do painel|
+|Email|email-api-client|Email Locaweb|Gem|Rubygem client da email-api(email_api_client)|
+|Email|email-client|Email Locaweb|Gem|Rubygem client da email-gift-api|
+|Email|email-core|Email Locaweb|Gem|Gem que centraliza algumas regras de negócio compartilhadas entre a email-gift-api e controller2-locamail (validação de DNS, validação de email e grupos e planos)|
+|Email|email-docs|Email Locaweb|Docs|Documentação dos projetos de email (legado)|
+|Email|email-security-api|Email Locaweb|API|API de seguraça que permite gerenciar uma senha de app e o 2FA no webmail|
+|Email|email-schedule-api|Email Locaweb|API|Responsável por abrigar as regras de negócios nos processos CRUD de agendamentos e cadastro de usuário|
+|Email|email-schedule-orquestrator|Email Locaweb|Background Jobs|Responsável por realizar busca no banco de agendamentos a cada minuto e enviar dados para fila de disparo|
+|Email|email-schedule-dispacher|Email Locaweb|Background Jobs|O Serviço Disparador de Emails processa mensagens de uma fila, atualiza o status na base de dados e realiza o envio.|
+|Email|calendar-subscription-manager|Email Locaweb|API|Ferramenta destinada ao gerenciamento de inscrições em calendários a partir de links ICS. Ela permite que os usuários se inscrevam em múltiplos calendários e recebam atualizações por meio de um mecanismo de callback.|
+|Email|calendar-subscription-scheduler|Email Locaweb|Background Jobs|O Ordenador de Atualizações é uma ferramenta responsável por enviar atualizações para a fila de calendários inscritos.|
+|Email|calendar-subscription-updater|Email Locaweb|Background Jobs|O Atualizador de Calendários é uma ferramenta projetada para atualizar calendários a partir de links ICS. Ela salva as informações dos calendários em um bucket da AWS e envia uma mensagem de resposta para uma fila de callback|
+|Email|email-gift-api|Email Locaweb|API Rails|API responsável pelo gerenciamento completo do serviço de email no ambiente antigo (GIFT)|
+|Email|email-operations-api|Email Locaweb|API|Aplicação desenvolvida para o time de operações para obtenção de domínios|
+|Email|email-panel|Email Locaweb|Frontend|Painel de email do ambiente antigo (GIFT)|
+|Email|email-panel-plus|Email Locaweb|Frontend|Painel de email do ambiente novo|
+|Email|email-product-api|Email Locaweb|API|Aplicação responsável pela comunicação entre as aplicações de EA com as aplicações dos produtos|
+|Email|hiring-email-api|Email Locaweb|API|API usada na contratação para determinar o ambiente a ser escolhido e também validar se é possivel realizar contratações dado domínio x customer login|
+|Email|isr|Email Locaweb|MVC|Painel de operações de todos os produtos de email, fornece relatórios e algumas ações para o time de operação|
+|Email|painel-de-spam|Email Locaweb|MVC|Painel legado responsável para realizar o desbloqueio de mensagens suspeitas (SPAM) enviadas pelo cliente|
+|Email|painel-locamail|Email Locaweb|MVC|Painel legado e desativado de email|
+|Email|plan-manager-api|Email Locaweb|API|API responsável pelo gerenciamento dos planos de email, fornece endpoints para as alterações provenientes da product-api|
+|Email|plan-manager-client|Email Locaweb|Gem|Rubygem client da plan-manager|
+|Email|product-api|Email Locaweb|API|Product-API do ambiente, responsável por conter informações sobre planos e realizar as ações de upgrade, downgrade e alterações de plano|
+|Email|roundcube-email|Email Locaweb|MVC|Aplicação baseada no roundcube, para prover uma aplicação de Mail User Agent (MUA) personalizado para a locaweb|
+|Email|sabrest-client|Email Locaweb|Gem|Rubygem cliente de API da sabrest|
+|Email|webmail2016|Email Locaweb|MVC|Webmail dos ambientes de email (antigo e novo), projeto baseado na solução opensource chamada RoundCube|
+|Email|sabrest|Email Locaweb|API|API responsável por administrar contas, domínios do sabre/dav que é o sistema gerenciador de calendário e contatos|
+|Email|bifrost|Email Locaweb|API|Projeto responśavel pela migração de clientes do ambiente antigo (gift) para o ambiente novo|
+|Suite de Serviços|exchange-provisioner|Exchange|API|Provisionador de Exchange 2010|
+|Suite de Serviços|ficha-exchange|Exchange|Ficha|Arquivo XML para uso de Sites|
+|Suite de Serviços|ficha-googleapps|Google Workspace|Ficha|Arquivo XML para uso de Sites|
+|Suite de Serviços|exchange-automate-client|Exchange|Gem||
+|Suite de Serviços|exchange-client|Exchange|Gem||
+|Suite de Serviços|xmail|Exchange|API|Provisionador de Exchange 2016|
+|Suite de Serviços|googleapps-provisioner|Google Workspace|MVC|API de provisionamento dos produtos da Google Workspace|
+|Suite de Serviços|googleapps-templates|Google Workspace|NOTIFICATIONS|Aplicação para templates de notificação aos clientes do produto.|
+|Emkt|emailmarketing|Email Marketing||Projeto do Email Marketing Antigo|
+|Emkt|email-marketing-provisioner|Email Marketing|API / Background jobs|Projeto do Email Marketing Antigo|
+|Emkt|akeem|Email Marketing|Gem|Responsável por analisar mensagens suspeitas de phishing e gerar relatórios de análise.|
+|Emkt|emkt-api|Email Marketing|API|Responsável por tratar requisições http de backend do email marketing. Atuando como auxiliar no projeto EMKT-WEB|
+|Emkt|emkt-bounces|Email Marketing|Background jobs|Responsável por receber a mensagem de rejeição (bounce) tenta classificá-la em Hard Bounce ou Soft Bounce.|
+|Emkt|emkt-core|Email Marketing|Gem|É uma dependência compartilhada usada primariamente para acessar os modelos no banco de dados, dentro da estrutura de multischema e sharding.|
+|Emkt|emkt-migration|Email Marketing||Repo utilizado para guardar os scripts de migração do emkt antigo para o emkt atual|
+|Emkt|emkt-milter|Email Marketing|Antispam|É um milter para postfix que analisa todos os e-mails devolvidos do Email Marketing e envia alguns cabeçalhos para o Redis no formato do Sidekiq.|
+|Emkt|emkt-reputation|Email Marketing|Web / API|Aplicação deprecada, sendo trocada pelo reputex|
+|Emkt|emkt-optin|Email Marketing|API|Responsável por simplificar o processo de envio de emails por meio de formulários personalizados. Atuando como auxiliar no projeto EMKT-WEB|
+|Emkt|emkt-provisioner|Email Marketing|API / Background jobs|Responsável pelo provisionamento das contas de email marketing. Lida com a instalação, adição de crédito, deleção, desativação, reativação de contas além de upgrade e downgrade de planos.|
+|Emkt|emkt-resale-product-api|Email Marketing|API|Product-API de Revenda de EMKT|
+|Emkt|emkt-resale-provisioner|Email Marketing|API / Background jobs|Provisionador de Revenda de EMKT|
+|Emkt|emkt-support|Email Marketing|Web|Painel backoffice utilizado pelo time de atendimento, responsável por gerenciar as contas dos clientes de emkt, anti-phishing e relatórios do emkt|
+|Emkt|emkt-web|Email Marketing|Web / API|Responsável por prover ao clientes o painel de email marketing onde é possível gerenciar campanhas, importar contatos, listas, criar novas mensagens, usar o editor de HTML para gerenciar templates, manter e acompanhar os eventos de sua campanha.|
+|Emkt|emkt-worker|Email Marketing|Background jobs|Responsável pelos background jobs utilizados pelo email marketing|
+|Emkt|heisenberg|Email Marketing|Web|Responsável por prover o editor de templates em HTML (antigo)|
+|Emkt|mulder|Email Marketing|Web|Antigo processador de relatórios da ReturnPath|
+|Emkt|reputation-events-client|Email Marketing|Gem|Responsável pela interface entre o reputex e apps em ruby/rails|
+|Emkt|reputex|Email Marketing|Web / API|Avaliação de reputação de contatos de email|
+|Emkt|unsubscribe|Email Marketing|Mail Server|Processamento de List-Unsubscribe|
+|Enterprise Applications|customer-api-client|Normandia|Gem||
+|Enterprise Applications|notifications-client|Notifications|Gem||
+|Estruturantes|amon_sul​||||
+|Estruturantes|arda-bin​||||
+|Estruturantes|consolatr​||||
+|Estruturantes|delphos||||
+|Estruturantes|cegonha||||
+|Estruturantes|eduARDA​||||
+|Estruturantes|fedex​||||
+|Estruturantes|docker registry||||
+|Estruturantes|docker-auth​||||
+|Estruturantes|geminabox|Geminabox|Geminabox|O Geminabox permite que você hospede suas próprias gemas e envie novas gemas para ele, assim como no rubygems.org. A API de dependências do bundler é suportada imediatamente.|
+|Estruturantes|guARDA​||||
+|Estruturantes|horatius​||||
+|Estruturantes|gitlab​||||
+|Estruturantes|gitlab​ runners||||
+|Estruturantes|jenkins​||||
+|Estruturantes|journal​||||
+|Estruturantes|marathon-cas-auth​||||
+|Estruturantes|marathon-lb||||
+|Estruturantes|marvin||||
+|Estruturantes|locaweb-elixir-toolkit||Gem||
+|Estruturantes|lw-rails-generators||Gem||
+|Estruturantes|palantir||||
+|Estruturantes|mazarbul​|Internal Docker Images|Docker Images||
+|Estruturantes|metabase​|Metabase|Web| Metabase é uma ferramenta de inteligência empresarial de código aberto (open source) que permite que qualquer pessoa faça perguntas sobre seus dados e visualize as respostas em formatos como gráficos ou tabelas. É fácil de usar, com uma interface amigável, e pode ser conectado a diversos bancos de dados populares|
+|Estruturantes|Professor​||||
+|Estruturantes|toolbox||||
+|Estruturantes|yamato​||||
+|Estruturantes|rack-request_id_store||Gem||
+|Estruturantes|sentry​|Sentry|Container|O Sentry é uma plataforma de monitoramento de erros que oferece uma maneira eficiente de rastrear e resolver problemas em aplicações|
+|Hospedagem|external-sync-api|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO] Sincronizador de dados dos planos e servidores G2 - legado|
+|Hospedagem|assets-hosting|Hospedagem Compartilhada e Dedicada|Assets|Armazena e fornecer assets estáticos e públicos utilizados pelos produtos de Hosting e Cloud Hosting. |
+|Hospedagem|feed-processor|Novo provisionamento|MVC|Sistema que padroniza e centraliza o processamento de eventos do SAP e gerencia transações de provisionamento.|
+|Hospedagem|hodor|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO]Sincroniza dados entre sistemas legados e o Novo Provisionamento - Legado|
+|Hospedagem|gus-fring|Hospedagem Compartilhada e Dedicada|API|Gerencia a estrutura de usuários do FTP-Multiusuário da Hospedagem|
+|Hospedagem|hank|Novo provisionamento|MVC|Painel que fornece visibilidade dos provisionamentos da Nova Hospedagem, integrando dados da product-manager e recipe-manager.|
+|Hospedagem|hospedagem-docs|Hospedagem Compartilhada e Dedicada|Docs|Documentação de aplicações da hospedagem|
+|Hospedagem|hosting-api|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO] Product-api de hospedagem legada. |
+|Hospedagem|hosting-applications|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO] Instalador de aplicativos do painel de Hospedagem legado (Softaculous)|
+|Hospedagem|hospedagem-scripts|Hospedagem Compartilhada e Dedicada|Scripts|Repositório para armazenamento de scripts gerais|
+|Hospedagem|hospedagem-vps-product-api|Hospedagem Compartilhada e Dedicada|API|Product-Api de hospedagem Dedicada|
+|Hospedagem|hosting-panel|Hospedagem Compartilhada e Dedicada|MVC híbrido (Rails e VueJs)|Painel de gerenciamento de hospedagem compartilhada, e serviços relacionados.|
+|Hospedagem|hosting-services|Hospedagem Compartilhada e Dedicada|API|Backend principal da hosting-panel, gerenciando todas as operações|
+|Hospedagem|http_client|Compartilhado|Gem||
+|Hospedagem|jesse-pinkman|Hospedagem Compartilhada e Dedicada|API|Product-Api de FTP MUlti e SSL pago|
+|Hospedagem|mula-server|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO] Relacionado ao piwik|
+|Hospedagem|mula-workers|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO] Relacionado ao piwik|
+|Hospedagem|locataculous|Hospedagem Compartilhada e Dedicada|API|Aplicação que se integra ao WP-CLI permitindo a instalação de Wordpress no Hospedagem e Revenda|
+|Hospedagem|locataculous-docker-executor|Hospedagem Compartilhada e Dedicada|Executável containerizado de ferramenta externa|Disponibilza imagem docker de suporte ao Locataculous|
+|Hospedagem|paas-migration-system|Hospedagem Compartilhada e Dedicada|MVC|Migrador de sites Windows 2008 legado|
+|Hospedagem|notifications_client||Gem||
+|Hospedagem|notifications-template-paas-hosting|Hospedagem Compartilhada e Dedicada|Notifications|Gerador de templates para notificações de produtos hospedagem|
+|Hospedagem|provisioning-hosting-system2|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO] Sistema de provisionamento de hospedagem legado|
+|Hospedagem|provisioning-workers|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO] Workers do provisionamento legado|
+|Hospedagem|psyduck|Hospedagem Compartilhada e Dedicada|API|[DEPRECADO] Migrador de sites legado|
+|Hospedagem|product_manager-representers|Novo provisionamento|Gem|Interação com a product-manager, permitindo consultas e criação de bundles|
+|Hospedagem|product-manager|Novo provisionamento|API|Camada de negócio do provisionamento de produtos / Product-Api principal do novo provisionamento, gerancia features e planos|
+|Hospedagem|recipes-manager|Novo provisionamento|API|Camada de gerenciamento físico de recursos do novo provisionamento|
+|Hospedagem|remote_factory||Gem||
+|Hospedagem|sapi_client||Gem||
+|Hospedagem|saruman-client||Gem||
+|Hospedagem|server_manager_proxy-client|Hospedagem Compartilhada e Dedicada|Gem||
+|Hospedagem|server-manager-proxy|Hospedagem Compartilhada e Dedicada|API|Proxy-api para acesso à ServerManagerService, gerenciadora de ações em servidor Windows|
+|Hospedagem|toggler|Toggler|MVC|Controle de fluxo/ funcionalidades de uma aplicação|
+|Hospedagem|toggler_client|Toggler|Gem||
+|Hospedagem|toggler-client|Toggler|Gem||
+|Hospedagem|url-redirector|Hospedagem Compartilhada e Dedicada|API|Gerenciador do redirecionamento de domínios|
+|Hospedagem|web-ftp-client|Hospedagem Compartilhada e Dedicada|Executável containerizado de ferramenta externa|Repositório que configura e executa a imagem do Filestash via Docker |
+|Hospedagem|whois_client||Gem||
+|Hospedagem|windows_web_farm_client|Hospedagem Compartilhada e Dedicada|Gem||
+|Hospedagem|windows-web-farm-client|Hospedagem Compartilhada e Dedicada|Gem|Cliente Ruby para provisionamento, escalonamento e gerenciamento simplificado de múltiplos servidores Windows|
+|Hospedagem|customer-migrator-panel|Migrador de Hospedagem|||
+|Hospedagem|hosting-migrator-email|Migrador de Hospedagem|||
+|Hospedagem|migration-compose|Migrador de Hospedagem|||
+|Hospedagem|migration-runner|Migrador de Hospedagem|||
+|Hospedagem|migrator-panel|Migrador de Hospedagem|||
+|Hospedagem|migrator-panel-bff|Migrador de Hospedagem|||
+|IAC|kwikemart-api||API||
+|MAPEAR|locaweb-authentication-client||Gem||
+|MAPEAR|advisor-metrux||Gem||
+|MAPEAR|audit-api-client||Gem||
+|MAPEAR|checkout_client||Gem||
+|MAPEAR|checkout-api-client||Gem||
+|MAPEAR|deploy-tools-client||Gem||
+|MAPEAR|email-model||Gem||
+|MAPEAR|locaweb-monitor||Gem||
+|MAPEAR|sc-wss||Gem||
+|Object Storage|l3-storage||||
+|Object Storage|storage-provisioner||||
+|PABX|notifications-templates-pabx|PABX|Notifications|Template para envio de email|
+|PABX|pabx-api|PABX|API|Aplicação backend para controle do PABX|
+|PABX|pabx-api-asterisk|PABX|API|Aplicação responsável pela fila de atualização dos arquivos do asterisk|
+|PABX|pabx-api-gateway|PABX|API|Aplicação backend para o novo painel do PABX|
+|PABX|pabx-api-product|PABX|API|Aplicação backend responsável por interargir com sistemas da Locaweb|
+|PABX|pabx-api-provisioner|PABX|API|Aplicação de back-end responsável pelo provisionamento dos produtos.|
+|PABX|pabx-biller|PABX|API|Aplicação de bilhetagem do pabx. |
+|PABX|pabx-docker-images|PABX|API|Aplicação deprecada, projeto descontinuado|
+|PABX|pabx-frontend|PABX|Web|Painel novo do PABX|
+|PABX|pabx-payments|PABX|API|Back-end responsável por faturamento|
+|PABX|pabx-produt-api|PABX|API|Aplicação back-end complementa informações|
+|PABX|pabx-provisioner|PABX|API|Aplicação de provisionamento antiga (Ruby) |
+|PABX|pabx-virtual-agi|PABX|API|Aplicação responsável por fazer as ligações com as implementações corretas. |
+|PABX|pabx-virtual-painel|PABX|API|Panel antigo|
+|PABX|pabx-virtual-schedule|PABX|API|Rotina de job para atualização de relatórios do asterisk|
+|PABX|saas-plan-config||API|Desconhecida|
+|Registro / SSL|dns-services|Registro de Domínio|Aplicação|Backend da dns-panel, realiza consulta e administração de zonas de DNS|
+|Registro / SSL|cartorio_client|Registro de Domínio|Gem|Client para comunicação com a cartorio-api|
+|Registro / SSL|cartorio-api|Registro de Domínio|Aplicação|API que faz gerenciamento de zonas de DNS, sendo interface de comunicação com o PowerDNS|
+|Registro / SSL|dns-api|Registro de Domínio|Aplicação|Backend da dns-frontend, realiza consulta e administração de zonas de DNS|
+|Registro / SSL|dns-frontend|Registro de Domínio|Aplicação|Painel de clientes para gerenciamento de zonas de dns|
+|Registro / SSL|locaweb-registro-checkout-sys1||Aplicação|Ficha de checkout para contratação e transferência de domínio para sys1|
+|Registro / SSL|locaweb-registro-checkout-sys2||Aplicação|Ficha de checkout para contratação e transferência de domínio para sys2|
+|Registro / SSL|dns-panel|Registro de Domínio|Aplicação|Painel de clientes para gerenciamento de zonas de dns|
+|Registro / SSL|document|Registro de Domínio|Gem|Encapsula algumas regras de parsing que são usadas em aplicações de registro de domínio (RegProv, RegistroServices) e na gem SapiClient|
+|Registro / SSL|registro-conciliator||Aplicação|Realiza a migração de usuários do sys1 para o sys2|
+|Registro / SSL|domain-api-client|Registro de Domínio|Gem|Client para comunicação com a domain-api|
+|Registro / SSL|domain-api|Registro de Domínio|Aplicação|Gerencia a relação entre domínios e provisionamentos do SAP, atuando como a base centralizada de domínios da Locaweb.|
+|Registro / SSL|new-domain-api|Registro de Domínio|Aplicação|Gerencia a relação entre domínios e provisionamentos do SAP, atuando como a base centralizada de domínios da Locaweb.|
+|Registro / SSL|domain-providers-events|Registro de Domínio|Aplicação|Responsável por monitorar e automatizar eventos operacionais do produto Domínio, garantindo integração com os provedores e a atualização contínua de informações críticas.|
+|Registro / SSL|registro-services-sys1||Aplicação|API para consulta e gerenciamento de domínios, oferecendo informações detalhadas sobre o produto Registro de Domínio.|
+|Registro / SSL|escriba|Registro de Domínio|Aplicação|Concentrar as regras de negócio necessárias para provisionar um Registro de Domínio|
+|Registro / SSL|lets-encrypt-provider|SSL|Aplicação|Gerencia a emissão de certificados na Let's Encrypt|
+|Registro / SSL|eppbr(libepp-debian-x64)|Registro de Domínio|Gem|Shepp - Biblioteca em C++ desenvolvida pela RegistroBR que implementa parcialmente o Extensible Provisioning Protocol (EPP) e convertida para um pacote Debian pela Locaweb. |
+|Registro / SSL|reg-prov|Registro de Domínio|Aplicação|Gerencia o ciclo de vida de um registro de domínio na Locaweb|
+|Registro / SSL|notifications-templates-namestore|Registro de Domínio|Aplicação|Esta aplicação contem os templates de e-mails do produto Registro de Domínio|
+|Registro / SSL|notifications-templates-ssl|SSL|Aplicação|Esta aplicação contem os templates de e-mails do produto SSL|
+|Registro / SSL|registro-model|Registro de Domínio|Gem|Centraliza o código fonte de (modelos e validações) do núcleo de registro de domínio facilitando a reutilização e evitando duplicidades de fontes entre as aplicações de front-end e back-end|
+|Registro / SSL|whois-parser||Gem|Um parser para respostas WHOIS, usada para interpretar e extrair informações estruturadas dos dados retornados por consultas WHOIS.|
+|Registro / SSL|whois-parser-locaweb||Gem|Um parser para respostas WHOIS, usada para interpretar e extrair informações estruturadas dos dados retornados por consultas WHOIS.|
+|Registro / SSL|registro-panel|Registro de Domínio|Aplicação|Painel de gerenciamento de domínios|
+|Registro / SSL|domain-panel-frontend|Registro de Domínio|Aplicação|Painel de gerenciamento de domínios|
+|Registro / SSL|domain-panel-api|Registro de Domínio|Aplicação|Backend do Painel de gerenciamento de domínios domain-panel-frontend|
+|Registro / SSL|registro-poller|Registro de Domínio|Aplicação|Consome mensagens do poll via EPP da Registro.br|
+|Registro / SSL|registro-services-sys2|Registro de Domínio|Aplicação|API para consulta e gerenciamento de domínios, oferecendo informações detalhadas sobre o produto Registro de Domínio.|
+|Registro / SSL|reg-prov-sys2|Registro de Domínio|Aplicação|Gerencia o ciclo de vida de um registro de domínio na Locaweb|
+|Registro / SSL|ssl-panel|SSL|Aplicação|Gerencia os certificados SSL da GlobalSign|
+|Registro / SSL|ssl-registry|SSL|Aplicação|Centralizar a emissão, gerenciamento e renovação de certificados SSL independente de autoridade certificadora |
+|Revenda|plesky|Revenda Terceiros|Aplicação|API que auxilia o provisionamento/desprovisionamento de revendedores Plesk|
+|Revenda|cpanel-hook|Revenda Terceiros|Aplicação|Módulo manipulador de eventos responsável por enviar ao Reseller-Conciliator e ao MailGiftApi qualquer nova caixa de correio criada em servidores cPanel.|
+|Revenda|cpanel-manager-client|Revenda Terceiros|GEM|Ciient que possibilita o gerenciamento das chaves das licenças das CPanels|
+|Revenda|cpanel-scripts|Revenda Terceiros|Aplicação|Coleção de scripts em Perl que auxiliam na configuração de servidores e máquinas de clientes|
+|Revenda|cpanel-whm-reseller-plugin|Revenda Terceiros|Aplicação|Plugin de instalação e desativação na interface do WHM do cPanel. Permite que revendedores verifiquem se existem migrações de plano|
+|Revenda|cpanel-whm-reseller-ssl-plugin|Revenda Terceiros|Aplicação|Plugin que permite que o revendedor acompanhe o AutoSSL para cada um de seus clientes|
+|Revenda|reseller-migration|Revenda Terceiros|Aplicação|Aplicação que executa migração de emails de revendedores|
+|Revenda|devstack|Revenda Terceiros|Aplicação|Guia para configuração de Openstack|
+|Revenda|plesk-event-handlers|Revenda Terceiros|Aplicação|Aplicação responsável por enviar email pelo painel Plesk|
+|Revenda|plesk-scripts|Revenda Terceiros|Aplicação|Repositório de scripts para utilização erm Plesks|
+|Revenda|reseller_token_client|Revenda Terceiros|GEM|Client para comunicação com o Reseller Token|
+|Revenda|reseller-conciliator|Revenda Terceiros|Aplicação|Aplicação que sincroniza contas de email de revendedores Plesk e cPanel|
+|Revenda|reseller-docs||Aplicação|Documentação técnica do time de Revenda|
+|Revenda|reseller-email-agent|Revenda Terceiros|Aplicação|Agent que envia novos emails criados e deletados para a aplicação Reseller Conciliator|
+|Revenda|reseller-herbert-consumer|Revenda Terceiros|Aplicação|Aplicação que recebe dados de resellers para envio à Product API|
+|Revenda|reseller-migration-api|Revenda Terceiros|Aplicação|Aplicação em ASP que auxilia na migração de Revendedores entre planos|
+|Revenda|reseller-panel|Revenda Locaweb|Aplicação|Frontend do Painel de Revendedores|
+|Revenda|reseller-product-api|Revenda Terceiros|Aplicação|Esqueleto de aplicação que conectaria dados de Reseller com a Product-API|
+|Revenda|reseller-provisioning|Revenda Terceiros|Aplicação|Aplicação responsável por disponibilizar dasdos de Resseler pra outras equipes da Locaweb (Ex: BI)|
+|Revenda|reseller-qa|Revenda Terceiros|Aplicação|Aplicação responsável por gerenciar as features e os testes funcionais que são executados no pipeline da Nova Revenda|
+|Revenda|reseller-rabbit|Revenda Terceiros|Aplicação|Aplicação que coleta dados de status de resellers e seus clientes e envia para o RabbitMQ|
+|Revenda|reseller-services|Revenda Locaweb|Aplicação|Backend responsável pelas regras de negócios do Painel de Revenda|
+|Revenda|reseller-token|Revenda Terceiros|Aplicação|Aplicação que valida requisições recebidas por Plesks e CPanels|
+|Revenda|reseller-token-winpack|Revenda Terceiros|Aplicação|Executável que valida requisições recebidas por Plesks Windows|
+|Revenda|reseller-whmcs-analytics|Revenda Terceiros|Aplicação|Aplicação responsável por metrificar a quantidade de logins que o cliente faz no painel do WHMCS por dia|
+|Revenda|whmcs-client|Revenda Terceiros|Gem|Gem que disponibiliza as funcionalidades da API do WHMCS|
+|Revenda|hosting-migrator-database-mysql|Migrador de Hospedagem|Aplicação|Motor que auxilia na migração de bancos MySQL|
+|Revenda|hosting-migrator-database-postgres|Migrador de Hospedagem|Aplicação|Motor que auxilia na migração de bancos PostgreSQL|
+|Revenda|hosting-migrator-email|Migrador de Hospedagem|Aplicação|Motor que auxilia na migração de emails|
+|Revenda|hosting-migrator-ftp|Migrador de Hospedagem|Aplicação|Motor que auxilia na migração de FTP|
+|Revenda|migration-compose|Migrador de Hospedagem|Aplicação|Backend do Painel de Revenda|
+|Revenda|migration-runner|Migrador de Hospedagem|Aplicação|Backend que aciona os motores do Migrador|
+|Revenda|migrator-panel|Migrador de Hospedagem|Aplicação|Painel do Migrador|
+|SMTP|authorization-policy|SMTP|TCP Server|Autorização de disparos via SMTP|
+|SMTP|bounce-classifier|SMTP|Gem||
+|SMTP|bounces-milter|SMTP|Antispam|Processamento de erros de envio|
+|SMTP|coast-guard|SMTP|Mail Server|Antispam de mensagens interno|
+|SMTP|core-api|SMTP|API|API interna para o fluxo de envio de mensagens|
+|SMTP|feed_consumer|SMTP|Gem||
+|SMTP|freddie|SMTP|Web / API|Catálogo e monitoração de infraestrutura de envio|
+|SMTP|freddie-client|SMTP|Gem||
+|SMTP|heimdall|SMTP|API|API de autenticação de envios (Kinghost)|
+|SMTP|product-apify|SMTP|Gem||
+|SMTP|saas-smtp-api|SMTP|API|API do produto para o cliente|
+|SMTP|saas-smtp-milter|SMTP|Antispam|Inclusão de headers de trackeamento de mensagens|
+|SMTP|saas-smtp-models|SMTP|Gem||
+|SMTP|saas-smtp-open-click|SMTP|API|Processamento de abertura de mensagens|
+|SMTP|saas-smtp-panel|SMTP|Web|Painel do cliente|
+|SMTP|saas-smtp-provisioner|SMTP|Background jobs|Provisionamento de contas|
+|SMTP|saas-smtp-workers|SMTP|API / Background jobs|Contabilizador de relatórios do produto|
+|SMTP|zoidberg|SMTP||Experimento com k8s|
+|Squad New Revenue|assets-backup-services|Backup de Servidores|Assets|Assets públicos do produto backup|
+|Squad New Revenue|assets-cliclead|ClicLead|Assets|assets públicos do cliclead publicados no assets.locaweb|
+|Squad New Revenue|backup-hosting-api|Backup de Servidores|API|Back-end do painel do produto Backup de Hospedagem |
+|Squad New Revenue|backup-hosting-panel|Backup de Servidores|SPA|Front-end do painel do produto Backup de Hospedagem|
+|Squad New Revenue|clic-lead-api|ClicLead|API|"API do projeto cliclead para CRUD do produto, provisionamento, dados do widget, recebimento dos eventos"|
+|Squad New Revenue|clic-lead-panel|ClicLead|Web / VueJs|Painel web/SPA do produto cliclead em VueJs|
+|Squad New Revenue|notifications-template-backup-services|Backup de Servidores|Notifications|Aplicação para templates de notificação aos clientes do produto de Backup|
+|Squad New Revenue|notifications-templates-cliclead|ClicLead|Notifications|Aplicação para templates de notificação aos clientes do produto |
+|Wordpress|navarch|Plataforma Wordpress|API|API em Python que faz interface com o Kubernetes para provisionar e administrar instâncias do WordPress, disponibilizando rotas para instalar, desativar, reativar, atualizar e deletar.|
+|Wordpress|navarch_client|Plataforma Wordpress|Gem|Client para API Navarch.|
+|Wordpress|notifications-templates-wordpress|Plataforma Wordpress|Notifications|Aplicação responsável pelos templates de notificação à clientes wordpress|
+|Wordpress|wordpress-analytics|Plataforma Wordpress|MVC|Aplicação responsável gerenciar as métricas do produto WordPress.|
+|Wordpress|wordpress-panel|Plataforma Wordpress|SPA|Aplicação responsável por ser o front-end do Wordpress.|
+|Wordpress|wordpress-services|Plataforma Wordpress|API + MVC|Serviço central que gerencia a Hospedagem WordPress, intermediando clientes, provisonamento e infraestrutura, além de contar com um Painel de Sustentação para suporte.

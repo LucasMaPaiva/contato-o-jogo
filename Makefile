@@ -1,15 +1,13 @@
-.PHONY: install up down logs
+.PHONY: up down logs
 
-COMPOSE_PROJECT_NAME := h7-escalas
-COMPOSE := docker compose -f .docker/docker-compose.yml -p $(COMPOSE_PROJECT_NAME) --env-file .env.local
-
-install: up
+# Comandos para gerenciar a infraestrutura via Docker
+# Nota: Referencia o docker-compose.yml localizado nesta pasta
 
 up:
-	$(COMPOSE) up --build -d
+	docker compose up --build -d
 
 down:
-	$(COMPOSE) down
+	docker compose down
 
 logs:
-	$(COMPOSE) logs -f
+	docker compose logs -f frontend

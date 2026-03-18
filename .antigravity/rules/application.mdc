@@ -1,0 +1,213 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Application Documentation Generator - Generic Version
+
+> Gera um arquivo `docs/APPLICATION.md` com mapeamento técnico detalhado da aplicação para uso por outros desenvolvedores e IAs.
+
+## 🎯 Objetivo
+
+Criar documentação técnica que contenha:
+- **Mapeamento completo** da arquitetura e dependências
+- **Informações precisas** para outros sistemas e IAs
+- **Detalhes técnicos** suficientes para manutenção e evolução
+- **Contexto do projeto** integrado
+
+---
+
+## 📋 Template de Referência
+
+Use como base o template completo: [application-template.md](mdc:.cursor/rules/templates/application-template.mdc)
+
+**Substitua os placeholders `[...]` com informações reais da aplicação.**
+
+---
+
+## 🔍 Como Preencher o Template
+
+### 1. **Informações Básicas:**
+- **Name**: Nome do diretório atual ou repository
+- **SCM**: URL do repositório (`git remote -v`)
+- **Description**: README.md existente, comentários do código principal
+
+### 2. **Arquitetura - Detectar Automaticamente:**
+
+**Classificação:**
+- **Monolítica**: Uma aplicação, um deploy
+- **Microsserviço**: Aplicação focada, APIs bem definidas
+- **SPA**: Frontend JavaScript separado
+- **API Rest**: Backend apenas com APIs
+- **Full Stack**: Frontend + Backend integrados
+- **Serverless**: Functions/Lambda
+- **Híbrida**: Combinação dos anteriores
+
+**Modelo de Deploy:**
+- Existe `Dockerfile` → Containerização
+- Existe `docker-compose.yml` → Multi-container
+- Existe `kubernetes/` ou `k8s/` → Kubernetes
+- Verificar scripts de deploy
+
+**Stack Técnico:**
+- `docker-compose.yml` → Serviços e dependências
+- `nginx.conf` → Reverse proxy config
+- Arquivos de config do app server
+
+### 3. **App Server - Analisar Configurações:**
+
+**Ruby/Rails:**
+- `config/puma.rb` → workers, threads, configurações
+- `config/unicorn.rb` → se usar Unicorn
+
+**Node.js:**
+- `package.json` scripts → configurações de start
+- Variáveis de ambiente para workers/clusters
+- `server.js`, `app.js` → configuração do servidor
+
+**Python:**
+- `gunicorn.conf.py` → configuração Gunicorn
+- `wsgi.py` → WSGI application
+- `requirements.txt` → web servers
+
+**PHP:**
+- `composer.json` → dependências e configurações
+- `php.ini` → configurações PHP
+- `.htaccess` → configurações Apache
+
+**Java:**
+- `application.properties` → server.port, thread pools
+- `application.yml` → configurações Spring Boot
+- `pom.xml`/`build.gradle` → build configuration
+
+### 4. **Initializers - Verificar Código de Inicialização:**
+
+**Ruby/Rails:**
+- `config/initializers/` → todos os arquivos .rb
+- `config/application.rb` → configurações carregadas
+
+**Node.js:**
+- `app.js`/`index.js` → middleware carregado
+- Imports/requires no topo dos arquivos principais
+
+**Python:**
+- `__init__.py` → inicialização de módulos
+- `settings.py` → configurações Django
+
+**Outros:**
+- Arquivos de bootstrap/setup da aplicação
+
+### 5. **Functions & Endpoints - Mapear Rotas:**
+
+**Ruby/Rails:**
+- `config/routes.rb` → todas as rotas definidas
+- Controllers → actions disponíveis
+
+**Node.js/Express:**
+- `routes/` → arquivos de rotas
+- `app.get`, `app.post` → endpoints definidos
+
+**Python/Django:**
+- `urls.py` → mapeamento de URLs
+- `views.py` → views disponíveis
+
+**Python/FastAPI:**
+- Decorators `@app.get`, `@app.post` → endpoints
+
+**PHP/Laravel:**
+- `routes/api.php`, `routes/web.php` → rotas definidas
+- Controllers → métodos disponíveis
+
+**APIs REST:**
+- Padrões `/api/v1/`, `/api/v2/`
+- Swagger/OpenAPI docs se existirem
+
+### 6. **Database - Analisar Schema:**
+
+**Rails:**
+- `db/schema.rb` → estrutura atual das tabelas
+- `app/models/` → relacionamentos ActiveRecord
+
+**Laravel:**
+- `database/migrations/` → estrutura e histórico
+- `app/Models/` → modelos Eloquent
+
+**Django:**
+- `models.py` → definição de modelos
+- `migrations/` → histórico de mudanças
+
+**Node.js:**
+- `models/` → modelos Sequelize/Mongoose
+- `migrations/` → migrações de banco
+
+**Outros:**
+- Scripts SQL de criação
+- ORMs e suas configurações
+
+### 7. **Pipeline - Verificar CI/CD:**
+- `.github/workflows/` → GitHub Actions
+- `.gitlab-ci.yml` → GitLab CI
+- `azure-pipelines.yml` → Azure DevOps
+- `Jenkinsfile` → Jenkins
+- `circle.yml` → CircleCI
+
+### 8. **Dependencies - Mapear por Tipo:**
+
+**Tipos de Dependência:**
+- **database**: PostgreSQL, MySQL, MongoDB, Redis, etc.
+- **cache**: Redis, Memcached
+- **queue**: RabbitMQ, AWS SQS, Redis Queue
+- **storage**: S3, filesystem, Google Cloud Storage
+- **external_api**: APIs de terceiros
+- **monitoring**: Sentry, New Relic, DataDog
+- **email**: SMTP, SendGrid, Mailgun
+- **auth**: OAuth providers, JWT
+
+---
+
+## 🏗️ Padrões Comuns
+
+### Infraestrutura:
+- **Load Balancer**: nginx, HAProxy, cloud providers
+- **Container Orchestration**: Docker Swarm, Kubernetes
+- **Logs**: ELK Stack, Fluentd, cloud logging
+- **Monitoramento**: Prometheus, Grafana, APM tools
+- **SSL/TLS**: Let's Encrypt, certificados próprios
+
+### Desenvolvimento:
+- **Execução local**: Via containers ou setup nativo
+- **Environment Variables**: `.env` files
+- **Scripts**: `Makefile`, `package.json scripts`, `composer scripts`
+- **Testing**: Unit tests, integration tests, E2E
+
+---
+
+## ✅ Validação Final
+
+**SEMPRE salve como:** `docs/APPLICATION.md` (APPLICATION em maiúsculas)
+
+Verificar se o APPLICATION.md gerado tem:
+
+**✅ Completude Técnica:**
+- [ ] Todas as seções preenchidas adequadamente
+- [ ] Arquitetura claramente classificada e descrita
+- [ ] Stack técnico mapeado corretamente
+- [ ] Dependencies tipificadas e especificadas
+- [ ] Database schema documentado (se aplicável)
+
+**✅ Detalhes da Aplicação:**
+- [ ] Informações de repositório corretas
+- [ ] Stack e versões identificadas
+- [ ] Configurações de desenvolvimento documentadas
+- [ ] APIs e endpoints mapeados
+- [ ] Dependências externas listadas
+
+**✅ Usabilidade para IAs:**
+- [ ] Formato estruturado e parseável
+- [ ] Informações suficientes para outros sistemas
+- [ ] Dependencies com type e spec bem definidos
+- [ ] Configurações de ambiente documentadas
+
+---
+
+**📌 Lembre-se:** Este documento será usado por **outros sistemas e IAs**. Seja preciso, estruturado e completo nas informações técnicas.

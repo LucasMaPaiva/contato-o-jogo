@@ -1,0 +1,536 @@
+# [Nome da Aplicação] - Development Guide
+
+> **Guia completo para setup e desenvolvimento local**
+
+## 🎯 Visão Geral
+
+Este documento contém todas as informações necessárias para configurar e desenvolver localmente a aplicação [Nome da Aplicação].
+
+---
+
+## 📋 Pré-requisitos
+
+### Sistema Operacional
+- **macOS**: [versão mínima]
+- **Linux**: [distribuições suportadas]  
+- **Windows**: [WSL2 recomendado]
+
+### Ferramentas Obrigatórias
+- **[Linguagem]**: [versão] - [link para instalação]
+- **[Gerenciador de pacotes]**: [npm/yarn/pip/composer/bundler]
+- **[Banco de dados]**: [PostgreSQL/MySQL] [versão]
+- **Git**: Para versionamento
+- **Docker & Docker Compose**: [Opcional/Obrigatório]
+
+### Ferramentas Opcionais (Recomendadas)
+- **[IDE/Editor]**: [VS Code/RubyMine/PyCharm] com extensões
+- **[Gerenciador de versão]**: [nvm/rbenv/pyenv]
+- **[Terminal]**: [Oh My Zsh/Powershell]
+
+---
+
+## 🚀 Setup Inicial
+
+### 1. Clonando o Repositório
+```bash
+# Clone o projeto
+git clone [repository-url]
+cd [project-name]
+
+# Verifique as branches disponíveis
+git branch -r
+```
+
+### 2. Configuração de Ambiente
+```bash
+# Copie o arquivo de configuração
+cp .env.example .env
+
+# Edite as configurações conforme necessário
+nano .env  # ou seu editor preferido
+```
+
+**Variáveis importantes no `.env`:**
+```bash
+# Banco de dados
+DATABASE_URL=postgresql://username:password@localhost:5432/[project_name]_development
+
+# Cache (Redis)
+REDIS_URL=redis://localhost:6379/0
+
+# APIs externas
+EXTERNAL_API_KEY=your_api_key_here
+EXTERNAL_API_URL=https://api.example.com
+
+# Ambiente
+RAILS_ENV=development    # Para Rails
+NODE_ENV=development     # Para Node.js
+DEBUG=true              # Para debug
+```
+
+---
+
+## 📦 Instalação de Dependências
+
+### Opção 1: Docker (Recomendado)
+```bash
+# Construa e inicie os containers
+docker-compose up -d
+
+# Verifique se os serviços estão rodando
+docker-compose ps
+
+# Acompanhe os logs
+docker-compose logs -f [service-name]
+```
+
+### Opção 2: Instalação Local
+
+#### Para [Ruby/Rails]:
+```bash
+# Instale as gems
+bundle install
+
+# Configure o banco
+rails db:create
+rails db:migrate
+rails db:seed
+```
+
+#### Para [Node.js]:
+```bash
+# Instale dependências
+npm install
+# ou
+yarn install
+
+# Configure o banco (se aplicável)
+npm run db:setup
+```
+
+#### Para [PHP/Laravel]:
+```bash
+# Instale dependências
+composer install
+
+# Configure a aplicação
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+```
+
+#### Para [Python/Django]:
+```bash
+# Crie ambiente virtual
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# ou
+venv\Scripts\activate     # Windows
+
+# Instale dependências
+pip install -r requirements.txt
+
+# Configure o banco
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+---
+
+## 🗄️ Configuração do Banco de Dados
+
+### PostgreSQL (Local)
+```bash
+# Instale PostgreSQL
+# macOS: brew install postgresql
+# Ubuntu: sudo apt-get install postgresql postgresql-contrib
+
+# Inicie o serviço
+# macOS: brew services start postgresql
+# Ubuntu: sudo service postgresql start
+
+# Crie usuário e banco
+createuser -d [username]
+createdb [project_name]_development
+```
+
+### MySQL (Local)  
+```bash
+# Instale MySQL
+# macOS: brew install mysql
+# Ubuntu: sudo apt-get install mysql-server
+
+# Configure o banco
+mysql -u root -p
+CREATE DATABASE [project_name]_development;
+CREATE USER '[username]'@'localhost' IDENTIFIED BY '[password]';
+GRANT ALL PRIVILEGES ON [project_name]_development.* TO '[username]'@'localhost';
+```
+
+### Docker (Automático)
+```bash
+# O docker-compose.yml já configura o banco
+# Apenas execute:
+docker-compose up -d database
+```
+
+---
+
+## ▶️ Executando a Aplicação
+
+### Modo Development
+
+#### Docker:
+```bash
+# Inicie todos os serviços
+docker-compose up
+
+# Ou em background
+docker-compose up -d
+
+# Acesse o container da aplicação
+docker-compose exec app bash
+```
+
+#### Local:
+```bash
+# Rails
+rails server
+# ou
+bundle exec rails s
+
+# Node.js
+npm start
+# ou
+npm run dev
+
+# Laravel
+php artisan serve
+
+# Django  
+python manage.py runserver
+```
+
+### Acessando a Aplicação
+- **URL**: http://localhost:[porta]
+- **API Docs**: http://localhost:[porta]/api/docs (se disponível)
+- **Admin**: http://localhost:[porta]/admin (se disponível)
+
+---
+
+## 🧪 Executando Testes
+
+### Todos os Testes
+```bash
+# Docker
+docker-compose exec app [comando-teste]
+
+# Local - Rails
+bundle exec rspec
+# ou
+rails test
+
+# Local - Node.js
+npm test
+# ou
+yarn test
+
+# Local - Laravel
+php artisan test
+# ou
+vendor/bin/phpunit
+
+# Local - Django
+python manage.py test
+```
+
+### Testes Específicos
+```bash
+# Por arquivo
+[comando-teste] spec/models/user_spec.rb
+
+# Por tag
+[comando-teste] --tag focus
+
+# Com coverage
+[comando-teste] --coverage
+```
+
+### Testes de Integração/E2E
+```bash
+# Se disponível
+npm run test:e2e
+# ou
+bundle exec cucumber
+```
+
+---
+
+## 🔧 Comandos Úteis
+
+### Aplicação
+```bash
+# Console/REPL da aplicação
+# Rails
+rails console
+
+# Laravel
+php artisan tinker
+
+# Django
+python manage.py shell
+
+# Node.js (se configurado)
+npm run console
+```
+
+### Banco de Dados
+```bash
+# Acesso ao banco via aplicação
+# Rails
+rails dbconsole
+
+# Laravel  
+php artisan db
+
+# Django
+python manage.py dbshell
+
+# Direto no PostgreSQL
+psql [database_name]
+```
+
+### Logs e Debug
+```bash
+# Visualizar logs
+# Rails
+tail -f log/development.log
+
+# Docker
+docker-compose logs -f [service]
+
+# Laravel
+tail -f storage/logs/laravel.log
+```
+
+### Linting e Formatação
+```bash
+# Verificar código
+[linter-command]  # rubocop, eslint, flake8, phpcs
+
+# Corrigir automaticamente
+[formatter-command]  # rubocop -a, prettier --write, black
+
+# Verificar tipos (se aplicável)
+[type-checker]  # mypy, flow, typescript
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Problemas Comuns
+
+#### 1. Erro de Dependências
+```bash
+# Limpe e reinstale
+# Node.js
+rm -rf node_modules package-lock.json
+npm install
+
+# Ruby
+bundle clean --force
+bundle install
+
+# PHP
+rm -rf vendor composer.lock
+composer install
+```
+
+#### 2. Problemas de Banco
+```bash
+# Reset completo do banco
+# Rails
+rails db:drop db:create db:migrate db:seed
+
+# Laravel
+php artisan migrate:fresh --seed
+
+# Django
+python manage.py flush
+python manage.py migrate
+```
+
+#### 3. Porta em Uso
+```bash
+# Encontre processo usando a porta
+lsof -ti:[porta]
+
+# Mate o processo
+kill -9 [PID]
+
+# Ou use porta diferente
+[comando-start] -p [nova-porta]
+```
+
+#### 4. Problemas de Permissão (Docker)
+```bash
+# Reconstrua containers
+docker-compose down
+docker-compose build --no-cache
+docker-compose up
+
+# Reset volumes (CUIDADO: perde dados)
+docker-compose down -v
+```
+
+### Logs de Debug
+```bash
+# Ative modo debug (se não estiver ativo)
+# Edite .env:
+DEBUG=true
+LOG_LEVEL=debug
+
+# Reinicie a aplicação
+```
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+[project-name]/
+├── [source-folder]/          # Código fonte principal
+│   ├── controllers/          # Controllers/Handlers
+│   ├── models/              # Models/Entities  
+│   ├── services/            # Business logic
+│   └── views/               # Templates/Views
+├── config/                  # Configurações
+├── db/                      # Database (migrations, seeds)
+├── tests/                   # Testes
+├── public/                  # Assets públicos
+├── docker-compose.yml       # Configuração Docker
+├── .env.example            # Exemplo de variáveis
+└── README.md               # Documentação básica
+```
+
+---
+
+## 🔄 Workflow de Desenvolvimento
+
+### 1. Nova Feature
+```bash
+# Crie branch a partir da main
+git checkout main
+git pull origin main
+git checkout -b feature/[nome-da-feature]
+
+# Desenvolva a feature
+[desenvolvimento]
+
+# Commit e push
+git add .
+git commit -m "[tipo]: [descrição]"
+git push origin feature/[nome-da-feature]
+
+# Abra Pull Request
+```
+
+### 2. Testes Antes do Commit
+```bash
+# Execute testes
+[comando-teste]
+
+# Verifique linting
+[linter-command]
+
+# Verificações de segurança (se configurado)
+[security-check-command]
+```
+
+### 3. Code Review
+- Aguarde aprovação de pelo menos [N] reviewer(s)
+- Resolva comentários se houver
+- Mantenha a branch atualizada com main
+
+---
+
+## 🧰 Ferramentas Recomendadas
+
+### IDEs/Editores
+- **VS Code**: Com extensões [lista de extensões]
+- **[IDE específica]**: [RubyMine/PyCharm/PhpStorm]
+
+### Extensions/Plugins Essenciais
+- **[Linguagem] Support**: Syntax highlighting e IntelliSense  
+- **Docker**: Para gerenciar containers
+- **Git**: Para versionamento visual
+- **[Linter]**: Para qualidade de código
+- **[Debugger]**: Para debug
+
+### Chrome Extensions (para desenvolvimento web)
+- **[Nome da extensão]**: [Finalidade]
+- **React DevTools**: Para aplicações React
+- **Vue DevTools**: Para aplicações Vue
+
+---
+
+## 📞 Suporte e Recursos
+
+### Contatos
+- **Team Lead**: [email/slack]
+- **DevOps**: [email/slack] 
+- **QA**: [email/slack]
+
+### Recursos Úteis
+- **Documentação da API**: [link]
+- **Wiki do Projeto**: [link]
+- **Slack Channels**: 
+  - #[project-name]-dev
+  - #[project-name]-general
+- **Issue Tracker**: [link]
+
+### Links Importantes
+- **Staging Environment**: [URL]
+- **Production Environment**: [URL]
+- **Monitoring Dashboard**: [URL]
+- **CI/CD Pipeline**: [URL]
+
+---
+
+## 🔄 Mantendo o Ambiente Atualizado
+
+```bash
+# Atualize dependências regularmente
+# Node.js
+npm update
+
+# Ruby  
+bundle update
+
+# PHP
+composer update
+
+# Python
+pip freeze > requirements.txt
+```
+
+### Atualizando Docker
+```bash
+# Rebuild containers quando houver mudanças
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+---
+
+**💡 Dicas:**
+- Sempre teste localmente antes de fazer push
+- Mantenha seu ambiente de desenvolvimento limpo  
+- Use branches para features/bugfixes
+- Documente mudanças significativas
+- Peça ajuda quando precisar!
+
+---
+
+*Última atualização: [data]*

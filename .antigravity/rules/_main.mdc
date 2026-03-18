@@ -1,0 +1,169 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 📚 Auto-Documentation System - Generic Version
+
+> **Sistema modular para geração automática de documentação técnica padronizada**
+
+## 🚨 DETECÇÃO AUTOMÁTICA DE COMANDOS
+
+**SE O USUÁRIO DIGITAR QUALQUER COMANDO QUE COMECE COM `doc:`, PARE IMEDIATAMENTE E:**
+1. LEIA o arquivo .mdc correspondente usando read_file
+2. EXECUTE exatamente as instruções contidas no arquivo
+3. NÃO substitua por busca semântica
+
+**COMANDOS VÁLIDOS:**
+- `doc:readme`, `doc:application`, `doc:development`, `doc:tech-flow [funcionalidade]`, `doc:completa`, `doc:help`, `doc:status`
+
+---
+
+## 🎯 Como Usar
+
+Este sistema funciona através de **comandos diretos**. Digite o comando desejado e o sistema executará automaticamente o prompt correspondente.
+
+## 📁 Estrutura de Documentação Gerada
+
+```
+/docs/
+├── README.md        # 📖 Visão geral e quick start
+├── APPLICATION.md   # 🔧 Arquitetura e dependências técnicas  
+├── DEVELOPMENT.md   # 💻 Setup local e ambiente de desenvolvimento
+└── flows/           # 📋 Fluxos técnicos detalhados por funcionalidade
+    ├── auth/
+    │   └── login-flow.md
+    ├── api/
+    │   └── user-management.md
+    └── features/
+        └── payment-flow.md
+```
+
+---
+
+## 🚀 Comandos Disponíveis
+
+**Digite qualquer comando abaixo para executar automaticamente:**
+
+### Documentação Completa
+- **`doc:completa`** → Gera toda documentação (readme + application + development)
+
+### Documentação Individual  
+- **`doc:readme`** → Gera overview geral da aplicação (`README.md`)
+- **`doc:application`** → Gera mapeamento técnico e arquitetura (`APPLICATION.md`)
+- **`doc:development`** → Gera guia de setup e desenvolvimento local (`DEVELOPMENT.md`)
+- **`doc:tech-flow [funcionalidade]`** → Gera documentação detalhada de funcionalidades específicas
+
+### Comandos de Apoio
+- **`doc:help`** → Mostra este menu novamente
+- **`doc:status`** → Verifica arquivos já gerados em /docs
+
+---
+
+## ⚡ EXECUÇÃO AUTOMÁTICA OBRIGATÓRIA
+
+**🚨 DETECÇÃO DE COMANDO - AÇÃO IMEDIATA REQUERIDA:**
+
+### SE O USUÁRIO DIGITAR QUALQUER COMANDO ACIMA:
+
+**VOCÊ DEVE PARAR TUDO E EXECUTAR IMEDIATAMENTE O PROMPT CORRESPONDENTE**
+
+**NÃO FAÇA:**
+- ❌ Busca semântica no código
+- ❌ Perguntas de confirmação
+- ❌ Explicações sobre o que vai fazer
+- ❌ Análise manual
+
+**FAÇA IMEDIATAMENTE:**
+- ✅ Execute o arquivo .mdc correspondente
+- ✅ Siga exatamente as instruções do prompt
+- ✅ Informe apenas o progresso durante execução
+
+### 📋 MAPEAMENTO EXATO DE COMANDOS - EXECUTE IMEDIATAMENTE:
+
+**QUANDO DETECTAR ESTES COMANDOS, EXECUTE O ARQUIVO CORRESPONDENTE:**
+
+- **`doc:completa`** → Execute: `readme.mdc` + `application.mdc` + `development.mdc`
+- **`doc:readme`** → Execute: `.cursor/rules/readme.mdc`
+- **`doc:application`** → Execute: `.cursor/rules/application.mdc`  
+- **`doc:development`** → Execute: `.cursor/rules/development.mdc`
+- **`doc:tech-flow [funcionalidade]`** → Execute: `.cursor/rules/tech-flow.mdc`
+- **`doc:help`** → Mostre este conteúdo
+- **`doc:status`** → Liste arquivos em /docs
+
+**🚨 EXEMPLO:**
+- Usuário digita: `doc:tech-flow authentication`
+- Você deve: **EXECUTAR IMEDIATAMENTE** `.cursor/rules/tech-flow.mdc`
+- NÃO faça busca semântica ou análise manual
+
+---
+
+## 📋 Checklist de Validação
+
+Após executar qualquer comando, verificar:
+
+### ✅ Estrutura Criada
+- [ ] Diretório `/docs` existe
+- [ ] Arquivos solicitados foram criados
+- [ ] Formato markdown válido
+
+### ✅ Conteúdo Presente  
+- [ ] Informações técnicas relevantes
+- [ ] Links internos funcionam
+- [ ] Tecnologias identificadas corretamente
+
+### ✅ Qualidade
+- [ ] Linguagem clara e objetiva
+- [ ] Seções bem organizadas  
+- [ ] Exemplos práticos incluídos
+
+---
+
+## 📁 Nomenclatura de Arquivos
+
+**Convenção estabelecida:**
+
+- ✅ **`README.md`** (maiúsculas) - Padrão universal GitHub/GitLab
+- ✅ **`APPLICATION.md`** (maiúsculas) - Documentação técnica interna
+- ✅ **`DEVELOPMENT.md`** (maiúsculas) - Documentação técnica interna
+- ✅ **`flows/[categoria]/[nome-normalizado].md`** (minúsculas)
+
+**Estrutura final gerada:**
+```
+/docs/
+├── README.md        # 📖 Visão geral (MAIÚSCULAS)
+├── APPLICATION.md   # 🔧 Arquitetura (maiúsculas)
+├── DEVELOPMENT.md   # 💻 Setup local (maiúsculas)
+└── flows/           # 📋 Fluxos técnicos (minúsculas)
+```
+
+---
+
+## 🔧 Sistema Extensível
+
+Este sistema pode ser personalizado para qualquer projeto:
+
+### Adicione seus contextos em `context/`:
+- **project-apis.mdc** - APIs externas do seu projeto
+- **project-services.mdc** - Microsserviços e dependências
+- **project-patterns.mdc** - Padrões técnicos da sua equipe
+
+### Personalize templates em `templates/`:
+- **readme-template.mdc** - Template específico do seu projeto
+- **application-template.mdc** - Arquitetura da sua stack
+- **development-template.mdc** - Setup do seu ambiente
+
+---
+
+## 🆘 Troubleshooting
+
+**Se algo não funcionar:**
+
+1. **Verifique o comando** - Deve ser exatamente como listado acima
+2. **Confirme a estrutura** - Arquivos de prompt devem estar em `.cursor/rules`
+3. **Execute novamente** - Sistema é idempotente, pode reexecutar
+4. **Use doc:status** - Para verificar o que já foi gerado
+
+---
+
+**💡 Dica:** Para melhor resultado, execute `doc:completa` para gerar toda a documentação de uma vez.

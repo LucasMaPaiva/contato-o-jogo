@@ -1,0 +1,129 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Services Inventory - Generic Template
+
+> **Inventário de serviços, APIs e dependências do projeto para mapeamento de integrações entre sistemas.**
+
+## 📋 Como Usar
+
+Quando mapear as aplicações e integrações, consulte este inventário para entender as dependências e relacionamentos entre sistemas.
+
+## 📝 Explicação das Colunas
+
+- **Service**: Nome do serviço ou API
+- **Type**: Tipo de serviço (API, Database, Cache, etc.)
+- **Purpose**: Finalidade/responsabilidade do serviço
+- **URL/Endpoint**: URL base ou endpoint principal
+- **Authentication**: Método de autenticação utilizado
+- **Team**: Time responsável pela manutenção
+
+---
+
+## 🔧 Tipos de Serviços Comuns
+
+- **API**: APIs REST/GraphQL para comunicação entre sistemas
+- **Database**: Bancos de dados principais e auxiliares
+- **Cache**: Sistemas de cache (Redis, Memcached)
+- **Queue**: Sistemas de filas (RabbitMQ, AWS SQS)
+- **Storage**: Armazenamento de arquivos (S3, filesystem)
+- **Monitoring**: Ferramentas de monitoramento e observabilidade
+- **External**: APIs de terceiros integradas ao sistema
+
+---
+
+## 📊 Inventário de Serviços
+
+> Exemplo de inventário - personalize para seu projeto
+
+| Service | Type | Purpose | URL/Endpoint | Authentication | Team |
+|---------|------|---------|--------------|----------------|------|
+| user-api | API | Gerenciamento de usuários | https://api.example.com/users | JWT | Backend Team |
+| payment-service | API | Processamento de pagamentos | https://api.example.com/payments | API Key | Payment Team |
+| notification-service | API | Envio de notificações | https://api.example.com/notifications | OAuth 2.0 | Platform Team |
+| main-database | Database | Banco principal | postgresql://localhost:5432 | Username/Password | Database Team |
+| redis-cache | Cache | Cache de sessões | redis://localhost:6379 | Password | Platform Team |
+| file-storage | Storage | Armazenamento de arquivos | https://s3.amazonaws.com/bucket | AWS IAM | DevOps Team |
+| email-provider | External | Envio de emails | https://api.mailgun.net/v3 | API Key | - |
+| payment-gateway | External | Gateway de pagamento | https://api.stripe.com/v1 | API Key | - |
+| analytics | External | Analytics | https://www.google-analytics.com | OAuth 2.0 | - |
+
+---
+
+## 🔗 Dependências Entre Serviços
+
+### Core Services (Críticos)
+- **user-api**: Base para autenticação de todos os outros serviços
+- **main-database**: Armazenamento principal de dados
+- **redis-cache**: Cache crítico para performance
+
+### Business Services
+- **payment-service**: Depende de user-api e payment-gateway
+- **notification-service**: Depende de user-api e email-provider
+
+### External Dependencies
+- **payment-gateway**: Stripe/PayPal/outro gateway
+- **email-provider**: SendGrid/Mailgun/SES
+- **analytics**: Google Analytics/Mixpanel
+
+---
+
+## 🚨 Pontos de Atenção
+
+### Single Points of Failure
+- **main-database**: Se falhar, afeta toda a aplicação
+- **user-api**: Autenticação centralized
+
+### Rate Limits
+- **email-provider**: [X] emails/hora
+- **payment-gateway**: [Y] requests/minuto
+- **analytics**: [Z] events/dia
+
+### SLA Requirements
+- **payment-service**: 99.9% uptime
+- **user-api**: 99.95% uptime
+- **notification-service**: 99% uptime
+
+---
+
+## 🔧 Configuração de Ambiente
+
+### Development
+```bash
+# Serviços locais
+USER_API_URL=http://localhost:3001
+PAYMENT_API_URL=http://localhost:3002
+NOTIFICATION_API_URL=http://localhost:3003
+
+# Dependências externas (sandbox)
+STRIPE_API_KEY=sk_test_...
+MAILGUN_API_KEY=test_key_...
+```
+
+### Production
+```bash
+# URLs de produção
+USER_API_URL=https://api.production.com/users
+PAYMENT_API_URL=https://api.production.com/payments
+NOTIFICATION_API_URL=https://api.production.com/notifications
+
+# Chaves de produção
+STRIPE_API_KEY=sk_live_...
+MAILGUN_API_KEY=live_key_...
+```
+
+---
+
+## 📞 Contatos por Serviço
+
+| Service | Team Contact | On-call | Documentation |
+|---------|-------------|---------|---------------|
+| user-api | backend-team@company.com | #oncall-backend | [docs](link) |
+| payment-service | payments@company.com | #oncall-payments | [docs](link) |
+| main-database | dba@company.com | #oncall-dba | [docs](link) |
+
+---
+
+**💡 Dica:** Mantenha este inventário atualizado sempre que adicionar ou remover dependências do projeto. Isso ajuda na documentação automática e na compreensão das integrações.

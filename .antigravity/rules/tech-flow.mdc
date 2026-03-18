@@ -1,0 +1,369 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Tech Flow Documentation Generator - Generic Version
+
+> Gera documentação técnica detalhada de funcionalidades específicas com análise profunda do código real.
+
+## 🎯 Objetivo
+
+**Criar documentação suficientemente detalhada para que um time que NÃO tem acesso ao código original seja capaz de recriar a funcionalidade em uma nova aplicação.**
+
+A documentação deve incluir todos os aspectos técnicos, regras de negócio, integrações e considerações necessárias para reimplementação completa.
+
+## 🔍 BUSCA SEMÂNTICA OBRIGATÓRIA PRIMEIRO
+
+**ANTES de escrever qualquer documentação, EXECUTE estas 6 buscas semânticas:**
+
+1. **Controllers e Models**: "Onde está implementada [funcionalidade] em controllers e models?"
+2. **Views e Frontend**: "Quais views, templates ou componentes frontend são usados em [funcionalidade]?"
+3. **APIs Externas**: "Quais APIs externas ou serviços são integrados com [funcionalidade]?"
+4. **Operações de Banco**: "Quais queries e operações de banco são usadas em [funcionalidade]?"
+5. **Tratamento de Erros**: "Como são tratados os erros em [funcionalidade]?"
+6. **Performance**: "Quais considerações de performance ou gargalos existem em [funcionalidade]?"
+
+**USE OS RESULTADOS REAIS DAS BUSCAS** - não invente exemplos.
+
+---
+
+## 📋 Checklist Mermaid (OBRIGATÓRIO)
+
+**Antes de finalizar, CONFIRME:**
+
+- [ ] **Formato Correto**: Usei `:::mermaid` e `:::` (Azure DevOps) ou \`\`\`mermaid (GitHub)
+- [ ] **Sintaxe Válida**: Testei sintaxe Mermaid
+- [ ] **Elementos entre aspas**: Todos os textos estão entre aspas duplas
+- [ ] **Sem customizações**: Não usei cores customizadas ou recursos beta
+
+**Para Azure DevOps:**
+```
+:::mermaid
+graph TD
+:::
+```
+
+**Para GitHub:**
+```mermaid
+graph TD
+```
+
+---
+
+## 📋 Checklist APIs Externas (OBRIGATÓRIO)
+
+**Para CADA chamada de API externa identificada, CONFIRME:**
+
+- [ ] **Identifiquei corretamente o serviço**: Qual API/serviço é usado?
+- [ ] **Verifiquei a URL base**: Qual domínio/subdomínio é usado?
+- [ ] **Encontrei autenticação**: Como se autentica (API key, OAuth, JWT, Basic Auth)?
+- [ ] **Mapeei payloads**: Request e response completos
+- [ ] **Identifiquei timeouts**: Configurações de timeout específicas
+
+**Tipos comuns de APIs:**
+- REST APIs (JSON/XML)
+- GraphQL endpoints
+- SOAP services
+- WebSocket connections
+- Third-party services (payment, email, etc.)
+
+---
+
+## 📝 ESTRUTURA OBRIGATÓRIA
+
+**Documente a funcionalidade quebrada em subfluxos (como "Tela inicial", "Validação", "Processamento", "Confirmação"), seguindo esta estrutura para CADA subfluxo:**
+
+### X. [Nome do Subfluxo]
+
+#### X.1 Fluxo da Aplicação
+**Interação do Usuário:**
+- O que o usuário vê na tela (botões, campos, mensagens)
+- Todas as possibilidades de interação
+- Views e componentes renderizados
+
+**Sequência do Código:**
+- Controllers → Services → Models → Libraries
+- Snippets relevantes com explicação linha a linha
+- Nome do arquivo e localização exata
+- Responsabilidade de cada trecho no fluxo geral
+
+#### X.2 Banco de Dados
+- Tabelas envolvidas com estrutura relevante
+- Queries executadas (SELECTs, INSERTs, UPDATEs)
+- Relacionamentos e índices utilizados
+- Transações se houver
+
+#### X.3 APIs Externas
+- **SERVIÇO ESPECÍFICO**: Qual API/serviço externo
+- URLs ou endpoints exatos
+- Método HTTP e headers
+- Payload de requisição e resposta
+- Autenticação (API key, OAuth, JWT, etc.)
+- Timeouts configurados
+- Rate limiting se aplicável
+
+#### X.4 Tratamento de Erros
+**Categorias de Erro:**
+- **Erros de validação**: De negócio, não técnicos
+- **Erros de integração**: APIs externas indisponíveis
+- **Erros de autorização**: Permissões insuficientes
+- **Erros técnicos**: Timeout, falha de rede, etc.
+
+**Para CADA tipo de erro:**
+- **Como é detectado**: Condição que gera o erro
+- **Mensagem exibida**: Para o usuário final
+- **Log gerado**: Para debugging
+- **Ação de recovery**: Como o sistema se recupera?
+- **Rollback necessário**: Reversão de estado
+
+#### X.5 Regras de Negócio
+**OBRIGATÓRIO - TODAS as regras de negócio devem ser descritas:**
+
+**Para CADA regra encontrada no código:**
+- **Descrição da regra**: O que ela valida/controla
+- **Onde está implementada**: Arquivo e método específicos
+- **Código snippet**: Trecho exato que implementa a regra
+- **Explicação linha a linha**: Como funciona tecnicamente
+- **Quando é aplicada**: Em que momento do fluxo
+- **Consequências**: O que acontece se a regra não for atendida
+
+**Exemplo de documentação de regra:**
+```
+Regra: Validação de email obrigatória
+- Localização: app/models/user.rb:45-52
+- Código:
+  ```ruby
+  def validate_email
+    return false if email.blank?
+    return false unless email.match(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
+    return false if User.exists?(email: email)
+  end
+  ```
+- Linha 45: Verifica se email não está em branco
+- Linha 46: Valida formato usando regex
+- Linha 47: Verifica unicidade no banco
+- Aplicada: Antes de salvar user no banco (before_save callback)
+- Falha: Retorna erro de validação, impede salvamento
+```
+
+**Categorias de Regras a Identificar:**
+- **Validações de dados**: Email, CPF, campos obrigatórios
+- **Regras de elegibilidade**: Quem pode usar a funcionalidade
+- **Restrições por status**: Estados que impedem/permitem ações
+- **Validações financeiras**: Pagamentos, limites, débitos
+- **Regras de negócio específicas**: Lógicas particulares do domínio
+- **Limitações técnicas**: Capacidades do sistema
+- **Middleware/Filters**: No framework
+- **Callbacks de model**: Before_save, after_create, etc.
+- **Policies de autorização**: Quem pode fazer o quê
+
+#### X.6 Diagrama de Sequência/Fluxo
+**Diagrama Mermaid Obrigatório:**
+- **Fluxo específico**: Apenas deste subfluxo
+- **Todas as etapas**: Do processo específico
+- **Pontos de decisão**: (if/else)
+- **Integrações externas**: APIs chamadas
+- **Tratamento de erros**: Caminhos de falha
+- **Estados finais**: Possíveis resultados
+
+---
+
+## 📝 ANÁLISE TÉCNICA ADICIONAL OBRIGATÓRIA
+
+### 🔍 Análise Completa de Código
+
+**Para CADA controller/service/model encontrado:**
+- **Caminho completo do arquivo**: `app/controllers/users_controller.rb`
+- **Métodos principais com linha**: `create (linha 21-44)`, `update (linha 49-81)`
+- **Snippet completo**: Todo o método relevante, não apenas partes
+- **Parâmetros aceitos**: Todos os params utilizados
+- **Variáveis de instância**: @user, @current_user, etc.
+- **Chamadas para outros métodos**: Com explicação do que fazem
+
+### 🗄️ Operações de Banco Detalhadas
+
+**Tabelas Envolvidas:**
+- **Estrutura das tabelas**: Campos principais relevantes
+- **Relacionamentos**: Foreign keys, joins utilizados
+- **Índices**: Quais são usados nas consultas?
+- **Constraints**: Unique, check constraints relevantes
+
+**Queries Específicas:**
+- **SELECTs**: Com JOINs e WHEREs completos
+- **INSERTs**: Quais dados são inseridos?
+- **UPDATEs**: Quais campos são alterados?
+- **Transactions**: Onde são usadas?
+
+**Performance de Banco:**
+- **Queries lentas**: Identificadas no código
+- **N+1 problems**: Se existirem
+- **Eager loading**: Como é implementado
+
+### 🔗 Integrações Externas Completas
+
+**Para CADA API externa encontrada:**
+- **IDENTIFICAÇÃO CORRETA**: Qual serviço/API específica
+- **URL base e endpoints**: Exatos, não exemplos
+- **Método HTTP**: GET, POST, PUT, DELETE
+- **Headers obrigatórios**: Autenticação, content-type, etc.
+- **Payload completo**: Estrutura exata do JSON/XML
+- **Response esperado**: Campos retornados
+- **Códigos de erro**: E como são tratados
+- **Timeouts configurados**: Valores específicos
+- **Retry policies**: Quantas tentativas, backoff
+
+### ⚡ Performance e Otimizações
+
+**Gargalos Identificados:**
+- **Operações custosas**: Com tempo estimado
+- **Chamadas síncronas**: Que poderiam ser assíncronas
+- **Consultas lentas**: Com explain plan se possível
+- **Processing pesado**: CPU/memory intensive
+
+**Otimizações Implementadas:**
+- **Cache**: Redis, memcached, application cache
+- **Background jobs**: Sidekiq, delayed_job, workers
+- **Lazy loading**: Dados carregados sob demanda
+- **Pagination**: Para listas grandes
+
+### 🧪 Cenários Reais de Uso e Edge Cases
+
+**Cenários de Sucesso (Happy Path):**
+- **Fluxo ideal**: Usuário típico usando a funcionalidade normalmente
+- **Variações válidas**: Diferentes caminhos que levam ao sucesso
+- **Dados de exemplo**: Valores reais que funcionam bem
+
+**Cenários Críticos (Edge Cases):**
+- **Limites do sistema**: Valores máximos/mínimos aceitos
+- **Casos extremos válidos**: Situações incomuns mas permitidas
+- **Configurações especiais**: Cenários com setup diferenciado
+
+**Cenários de Erro:**
+- **Todos os tipos de falha possíveis**: Baseados no código analisado
+- **Validações que falham**: Condições que impedem a operação
+- **Integrações indisponíveis**: Como se comporta quando APIs estão fora
+- **Dados inválidos**: O que acontece com inputs incorretos
+
+**Para CADA cenário, documente:**
+- **Condições iniciais**: Estado necessário para reproduzir
+- **Passos exatos**: Ações do usuário ou sistema
+- **Resultado esperado**: O que deve acontecer
+- **Como o sistema se comporta**: Mensagens, redirecionamentos, logs
+
+### 🔒 Segurança e Autorização
+
+**Controle de Acesso:**
+- **Autenticação**: Como verifica se o usuário está logado?
+- **Autorização**: Que permissões são necessárias?
+- **Validação de propriedade**: Como verifica se o recurso pertence ao usuário?
+
+**Auditoria:**
+- **Logs de auditoria**: Que ações são logadas?
+- **Rastreabilidade**: Como rastrear alterações?
+
+---
+
+## 📁 Onde Salvar
+
+Salve sempre em: `docs/flows/[categoria]/[nome-normalizado].md`
+
+**IMPORTANTE: A categoria deve refletir a FUNCIONALIDADE, não a estrutura de pastas do código.**
+
+**Exemplos corretos de categorização:**
+- **"user authentication"** → `docs/flows/auth/user-authentication.md` (categoria: `auth`)
+- **"payment processing"** → `docs/flows/payment/payment-processing.md` (categoria: `payment`)
+- **"user registration"** → `docs/flows/users/user-registration.md` (categoria: `users`)
+- **"file upload"** → `docs/flows/files/file-upload.md` (categoria: `files`)
+
+**Categorias baseadas na funcionalidade:**
+- `auth` (autenticação, login, logout, sessions)
+- `payment` (pagamento, checkout, refund)
+- `users` (usuários, registro, perfil, CRUD)
+- `files` (upload, download, storage)
+- `email` (envio, templates, notifications)
+- `api` (endpoints, webhooks, integrações)
+- `reports` (relatórios, analytics, exports)
+- `admin` (administração, backoffice)
+
+## 📋 CHECKLIST DE QUALIDADE OBRIGATÓRIO
+
+**ANTES de finalizar a documentação, CONFIRME CADA ITEM:**
+
+### ✅ Completude de Subfluxos
+- [ ] **Identifiquei TODOS os subfluxos**: Início, meio, fim, casos especiais
+- [ ] **Cada subfluxo tem X.1 a X.6**: Fluxo + Banco + APIs + Erros + Regras + Diagrama
+- [ ] **Nenhum caminho foi esquecido**: Success, error, edge cases cobertos
+- [ ] **Sequência lógica**: Os subfluxos seguem ordem natural de uso
+
+### ✅ Regras de Negócio Exaustivas
+- [ ] **TODAS as regras identificadas**: Busquei por validations, middleware, policies
+- [ ] **Localização exata**: Arquivo:linha para cada regra
+- [ ] **Código snippet completo**: Não apenas menção, mas código real
+- [ ] **Explicação linha por linha**: O que cada linha faz tecnicamente
+- [ ] **Momento de aplicação**: Quando no fluxo a regra é verificada
+- [ ] **Consequências claras**: O que acontece se falhar
+
+### ✅ APIs Externas Corretas
+- [ ] **Serviço identificado corretamente**: Qual API/serviço específico
+- [ ] **URL base verificada**: Domínio correto baseado no código
+- [ ] **Autenticação mapeada**: API key, OAuth, JWT encontrados no código
+- [ ] **Payloads reais**: Request/response baseados no código, não inventados
+- [ ] **Timeouts encontrados**: Valores específicos no código
+- [ ] **Códigos de erro**: Todos os rescue blocks e tratamentos mapeados
+
+### ✅ Código Detalhado
+- [ ] **Métodos completos**: Não apenas trechos, mas métodos inteiros relevantes
+- [ ] **Parâmetros todos mapeados**: Todos os params identificados
+- [ ] **Variáveis de instância**: Todas explicadas
+- [ ] **Chamadas de método**: Cada método chamado explicado
+- [ ] **Fluxo de execução**: Sequência real que o código segue
+
+### ✅ Banco de Dados Preciso
+- [ ] **Tabelas identificadas**: Todas as tabelas touched pelo código
+- [ ] **Queries reais**: Baseadas no código, não assumidas
+- [ ] **Relacionamentos**: Foreign keys e joins específicos
+- [ ] **Performance**: N+1, slow queries identificadas no código
+- [ ] **Transações**: Onde são usadas no código
+
+### ✅ Tratamento de Erros Completo
+- [ ] **Todos os rescue blocks**: Mapeados e explicados
+- [ ] **Exceptions específicas**: Nomes exatos das exceptions
+- [ ] **Mensagens de erro**: Textos reais mostrados ao usuário
+- [ ] **Logs**: O que é logado em cada erro
+- [ ] **Recovery**: Como o sistema se recupera
+
+### ✅ Interface de Usuário
+- [ ] **Views principais**: Todas as telas mapeadas
+- [ ] **Componentes**: Todos os components incluídos
+- [ ] **JavaScript**: Comportamentos dinâmicos explicados
+- [ ] **Formulários**: Todos os campos e validações client-side
+- [ ] **Estados da UI**: Como muda conforme o fluxo
+
+### ✅ Diagramas Técnicos
+- [ ] **Formato correto**: Mermaid syntax válida
+- [ ] **Sintaxe válida**: Testei a sintaxe
+- [ ] **Elementos entre aspas**: Todos os textos quoted
+- [ ] **Fluxo real**: Baseado no código, não idealizado
+- [ ] **Sistemas externos**: APIs corretas
+
+---
+
+## 🎯 Execução
+
+1. **EXECUTE quantas buscas semânticas forem necessárias (no mínimo 6)**
+2. **IDENTIFIQUE todos os subfluxos** da funcionalidade
+3. **DOCUMENTE cada subfluxo** seguindo a estrutura X.1 a X.6
+4. **COMPLETE a análise técnica adicional** (código, banco, APIs, performance, etc.)
+5. **VALIDE O CHECKLIST DE QUALIDADE COMPLETO** acima
+6. **PERGUNTAS FINAIS DE VALIDAÇÃO**: 
+   - "Confirmei TODOS os itens do checklist de qualidade?"
+   - "TODAS as regras de negócio têm localização + código + explicação linha a linha?"
+   - "Identifiquei corretamente as APIs externas com evidências do código?"
+   - "Um time conseguiria reimplementar COMPLETAMENTE baseado nesta documentação?"
+
+**IMPORTANTE:** 
+- Não aceite documentação superficial. Cada seção deve ter conteúdo substancial baseado no código real encontrado.
+- Use o checklist como validação obrigatória - se algum item não foi cumprido, a documentação está incompleta.
+- Evite repetições desnecessárias entre subfluxos - foque nos aspectos únicos de cada um.
+- Sempre que possível, inclua linha específica do código onde cada regra/comportamento está implementado.

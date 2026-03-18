@@ -1,0 +1,255 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Development Documentation Generator - Generic Version
+
+> Gera um arquivo `docs/DEVELOPMENT.md` com instruções completas para setup e desenvolvimento local.
+
+## 🎯 Objetivo
+
+Criar documentação de desenvolvimento que contenha:
+- **Setup local completo** - Do zero ao funcionando
+- **Instruções passo a passo** - Para qualquer desenvolvedor
+- **Troubleshooting** - Soluções para problemas comuns
+- **Workflow de desenvolvimento** - Como contribuir
+
+---
+
+## 📋 Template de Referência
+
+Use como base o template completo: [development-template.md](mdc:.cursor/rules/templates/development-template.mdc)
+
+**Substitua os placeholders `[...]` com informações reais da aplicação.**
+
+---
+
+## 🔍 Como Preencher o Template
+
+### 1. **Pré-requisitos - Detectar Automaticamente:**
+
+**Por Stack Tecnológico:**
+
+**Ruby/Rails:**
+```ruby
+# Verificar Gemfile
+ruby_version = extrair_de("Gemfile", /ruby ['"](.+)['"]/)
+rails_version = extrair_de("Gemfile", /gem ['"]rails['"], ['"](.+)['"]/)
+
+# Pré-requisitos:
+- Ruby [ruby_version]
+- Bundler
+- PostgreSQL/MySQL (conforme database.yml)
+- Redis (se presente)
+- Node.js (para assets)
+```
+
+**Node.js:**
+```json
+// Verificar package.json
+"engines": {
+  "node": ">=16.0.0",
+  "npm": ">=8.0.0"
+}
+
+// Pré-requisitos:
+- Node.js [version]
+- npm/yarn
+- Database (conforme .env.example)
+```
+
+**PHP/Laravel:**
+```json
+// Verificar composer.json
+"require": {
+  "php": "^8.1"
+}
+
+// Pré-requisitos:
+- PHP [version]
+- Composer
+- Database (MySQL/PostgreSQL)
+- Redis (opcional)
+```
+
+**Python:**
+```python
+# Verificar requirements.txt ou pyproject.toml
+python_version = extrair_requisitos()
+
+# Pré-requisitos:
+- Python [version]
+- pip/pipenv/poetry
+- virtualenv
+- Database conforme settings.py
+```
+
+### 2. **Instalação de Dependências:**
+
+**Detectar método baseado em arquivos:**
+```bash
+# Se existe package-lock.json → npm
+# Se existe yarn.lock → yarn  
+# Se existe Gemfile.lock → bundle
+# Se existe composer.lock → composer
+# Se existe requirements.txt → pip
+# Se existe Pipfile → pipenv
+# Se existe pyproject.toml → poetry
+```
+
+### 3. **Configuração de Ambiente:**
+
+**Analisar arquivos de configuração:**
+- `.env.example` → Variáveis necessárias
+- `config/database.yml` → Configuração de banco (Rails)
+- `database/database.php` → Configuração de banco (Laravel)  
+- `settings.py` → Configurações Django
+- `config.js` → Configurações Node.js
+
+**Gerar seção de exemplo:**
+```bash
+# Copiar arquivo de exemplo
+cp .env.example .env
+
+# Configurar variáveis principais
+DATABASE_URL=postgresql://user:pass@localhost/dbname
+REDIS_URL=redis://localhost:6379
+API_KEY=your_api_key_here
+```
+
+### 4. **Setup de Banco de Dados:**
+
+**Por framework:**
+
+**Rails:**
+```bash
+# Setup padrão Rails
+rails db:create
+rails db:migrate
+rails db:seed
+```
+
+**Laravel:**
+```bash
+# Setup Laravel
+php artisan migrate
+php artisan db:seed
+```
+
+**Django:**
+```bash
+# Setup Django  
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py loaddata fixtures/*.json
+```
+
+### 5. **Scripts e Comandos:**
+
+**Analisar arquivos para comandos comuns:**
+- `package.json` → scripts npm/yarn
+- `Makefile` → comandos make
+- `composer.json` → scripts composer
+- `script/` ou `bin/` → scripts personalizados
+
+### 6. **Docker Setup (se existe docker-compose.yml):**
+
+```bash
+# Comandos Docker padrão
+docker-compose up -d
+docker-compose exec app bash
+docker-compose logs -f app
+```
+
+### 7. **Testing:**
+
+**Detectar framework de testes:**
+- `package.json` → Jest, Mocha, Cypress
+- `Gemfile` → RSpec, Minitest
+- `composer.json` → PHPUnit
+- `requirements.txt` → pytest, unittest
+- `test/`, `spec/`, `tests/` → diretórios de teste
+
+### 8. **Linting e Code Style:**
+
+**Detectar ferramentas:**
+- `.eslintrc*` → ESLint (JS/TS)
+- `.rubocop.yml` → RuboCop (Ruby)
+- `.php-cs-fixer.php` → PHP CS Fixer
+- `black.toml`, `flake8` → Python linters
+
+### 9. **Troubleshooting Comum:**
+
+**Problemas por stack:**
+
+**Ruby/Rails:**
+- Bundle install issues
+- Database connection problems  
+- Ruby version conflicts
+- Asset compilation errors
+
+**Node.js:**
+- npm install failures
+- Port already in use
+- Node version issues
+- Missing global packages
+
+**PHP/Laravel:**
+- Composer dependency conflicts
+- Permission issues
+- Database connection
+- Extension missing
+
+**Python:**
+- Virtual environment issues
+- Package version conflicts
+- Database drivers missing
+- Environment variables
+
+### 10. **Workflow de Desenvolvimento:**
+
+**Comandos comuns detectados:**
+- Como iniciar servidor local
+- Como rodar testes
+- Como fazer build
+- Como ver logs
+- Como acessar console/REPL
+
+---
+
+## ✅ Validação Final
+
+**SEMPRE salve como:** `docs/DEVELOPMENT.md` (DEVELOPMENT em maiúsculas)
+
+Verificar se o DEVELOPMENT.md gerado tem:
+
+**✅ Completude do Setup:**
+- [ ] Pré-requisitos claramente listados
+- [ ] Instalação de dependências passo-a-passo
+- [ ] Configuração de ambiente detalhada
+- [ ] Setup de banco de dados funcional
+- [ ] Comandos para iniciar aplicação
+
+**✅ Workflow de Desenvolvimento:**
+- [ ] Como rodar testes
+- [ ] Como fazer debug
+- [ ] Como ver logs
+- [ ] Como contribuir com código
+- [ ] Comandos úteis documentados
+
+**✅ Troubleshooting:**
+- [ ] Problemas comuns identificados
+- [ ] Soluções testáveis
+- [ ] Links úteis para documentação
+- [ ] Contatos para suporte
+
+**✅ Usabilidade:**
+- [ ] Um desenvolvedor novo consegue rodar seguindo o guia
+- [ ] Todos os comandos funcionam
+- [ ] Não há passos em falta
+- [ ] Configurações são claras
+
+---
+
+**📌 Lembre-se:** Esta documentação será usada por **novos desenvolvedores**. Teste todos os passos em um ambiente limpo para garantir que funcionam.

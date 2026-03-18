@@ -1,0 +1,321 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Patterns and Standards - Generic Template
+
+> **Padrões técnicos, convenções e melhores práticas do projeto**
+
+## 📋 Como Usar
+
+Este arquivo define os padrões técnicos e convenções seguidos no projeto. Use como referência durante a documentação automática.
+
+---
+
+## 🏗️ Padrões de Arquitetura
+
+### Estrutura de Projeto
+```
+# Padrão MVC/Clean Architecture
+src/
+├── controllers/     # HTTP handlers
+├── services/        # Business logic
+├── models/          # Data models
+├── repositories/    # Data access layer
+└── utils/          # Utilities
+```
+
+### API Design
+- **REST**: Seguir padrões RESTful
+- **Versionamento**: `/api/v1/`, `/api/v2/`
+- **Status Codes**: Usar códigos HTTP apropriados
+- **Response Format**: JSON padronizado
+
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "Success message",
+  "errors": []
+}
+```
+
+---
+
+## 🔐 Padrões de Segurança
+
+### Autenticação
+- **JWT**: Token-based authentication
+- **Expiration**: 24 horas (padrão)
+- **Refresh Token**: 30 dias
+- **Headers**: `Authorization: Bearer <token>`
+
+### Autorização
+- **RBAC**: Role-Based Access Control
+- **Permissions**: Granular permissions per resource
+- **Middleware**: Verificação automática em rotas protegidas
+
+### Validação de Dados
+```javascript
+// Exemplo de validação
+const userSchema = {
+  email: { required: true, format: 'email' },
+  password: { required: true, minLength: 8 },
+  age: { type: 'number', min: 18, max: 120 }
+}
+```
+
+---
+
+## 📊 Padrões de Banco de Dados
+
+### Naming Conventions
+- **Tables**: snake_case (users, user_profiles)
+- **Primary Keys**: `id` (BigInteger)
+- **Foreign Keys**: `{table}_id` (user_id)
+- **Timestamps**: `created_at`, `updated_at`
+- **Soft Deletes**: `deleted_at`
+
+### Indexing Strategy
+- **Primary Key**: Sempre indexado automaticamente
+- **Foreign Keys**: Sempre indexar para JOINs
+- **Search Fields**: Campos de busca frequente
+- **Composite Indexes**: Para queries específicas
+
+### Migration Pattern
+```sql
+-- Exemplo de migration
+CREATE TABLE users (
+  id BIGSERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  status VARCHAR(50) DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_status ON users(status);
+```
+
+---
+
+## 🔧 Padrões de Desenvolvimento
+
+### Code Style
+- **Linting**: [ESLint/RuboCop/Flake8/PHP CS Fixer]
+- **Formatting**: [Prettier/RuboCop/Black/PHP CS Fixer]
+- **Line Length**: 80-120 caracteres
+- **Indentation**: 2 spaces (Ruby/JS) / 4 spaces (Python/PHP)
+
+### Commit Messages
+```
+# Padrão Conventional Commits
+type(scope): description
+
+# Tipos válidos:
+feat:     nova funcionalidade
+fix:      correção de bug
+docs:     documentação
+style:    formatação
+refactor: refatoração
+test:     testes
+chore:    build/config
+```
+
+### Branch Strategy
+```bash
+# Git Flow simplificado
+main                    # Produção
+develop                # Desenvolvimento
+feature/[description]  # Novas features
+hotfix/[description]   # Correções urgentes
+release/[version]      # Preparação de release
+```
+
+---
+
+## 📝 Padrões de Logging
+
+### Log Levels
+- **ERROR**: Erros que quebram funcionalidades
+- **WARN**: Situações suspeitas mas não críticas
+- **INFO**: Informações importantes de fluxo
+- **DEBUG**: Informações detalhadas para debug
+
+### Log Format
+```json
+{
+  "timestamp": "2023-12-01T10:30:00Z",
+  "level": "INFO",
+  "service": "user-api",
+  "message": "User created successfully",
+  "user_id": 12345,
+  "request_id": "abc123",
+  "metadata": {}
+}
+```
+
+### Sensitive Data
+- **NEVER LOG**: Passwords, tokens, credit cards
+- **MASK**: Email (u***@example.com), phone (***-****-1234)
+- **AUDIT**: Track important actions
+
+---
+
+## 🧪 Padrões de Testes
+
+### Test Structure
+```
+tests/
+├── unit/           # Testes unitários
+├── integration/    # Testes de integração
+├── e2e/           # Testes end-to-end
+└── fixtures/      # Dados de teste
+```
+
+### Test Naming
+```javascript
+// Padrão: describe what, when, then
+describe('UserService', () => {
+  describe('createUser', () => {
+    it('should create user when valid data provided', () => {
+      // test implementation
+    })
+    
+    it('should throw error when email already exists', () => {
+      // test implementation  
+    })
+  })
+})
+```
+
+### Coverage Goals
+- **Unit Tests**: > 80%
+- **Integration Tests**: Core flows cobertos
+- **E2E Tests**: Happy paths principais
+
+---
+
+## 🚀 Padrões de Deploy
+
+### Environment Strategy
+```yaml
+# Ambientes padrão
+development:
+  - Local development
+  - Feature branches
+  
+staging:
+  - Pre-production testing  
+  - QA validation
+  
+production:
+  - Live environment
+  - Main branch only
+```
+
+### Container Strategy
+```dockerfile
+# Multi-stage builds
+FROM node:18-alpine AS builder
+# Build stage...
+
+FROM node:18-alpine AS runtime  
+# Runtime stage...
+```
+
+### Health Checks
+```javascript
+// Endpoints obrigatórios
+GET /health         // Basic health check
+GET /health/ready   // Readiness probe  
+GET /health/live    // Liveness probe
+GET /metrics        // Prometheus metrics
+```
+
+---
+
+## 📊 Padrões de Monitoramento
+
+### Metrics to Track
+- **Request Rate**: Requests per second
+- **Response Time**: Average/P95/P99
+- **Error Rate**: 4xx/5xx responses
+- **Database**: Connection pool, query time
+- **Cache**: Hit rate, miss rate
+
+### Alerting Rules
+```yaml
+# SLA-based alerts
+- Response time P95 > 500ms
+- Error rate > 1%
+- Database connections > 80%
+- Memory usage > 85%
+- Disk usage > 90%
+```
+
+---
+
+## 🔄 Padrões de Integração
+
+### REST API Clients
+```javascript
+// Padrão de client HTTP
+const apiClient = {
+  baseURL: process.env.API_BASE_URL,
+  timeout: 30000,
+  retries: 3,
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  }
+}
+```
+
+### Error Handling
+```javascript
+// Padrão de tratamento de erros
+try {
+  const response = await apiCall()
+  return response.data
+} catch (error) {
+  if (error.code === 'TIMEOUT') {
+    // Log and retry
+  } else if (error.status >= 500) {
+    // Log as external service error
+  } else {
+    // Handle business logic error
+  }
+}
+```
+
+### Rate Limiting
+- **Internal APIs**: 1000 req/min per service
+- **External APIs**: Follow provider limits
+- **User APIs**: 100 req/min per user
+
+---
+
+## 📞 Support Patterns
+
+### Error Messages
+```javascript
+// User-friendly errors
+const errors = {
+  USER_NOT_FOUND: 'Usuário não encontrado',
+  INVALID_CREDENTIALS: 'Email ou senha incorretos',
+  INSUFFICIENT_PERMISSIONS: 'Você não tem permissão para esta ação'
+}
+```
+
+### Documentation Standards
+- **API**: OpenAPI/Swagger documentation
+- **Code**: Inline comments for complex logic
+- **Architecture**: Diagrams and flow charts
+- **Deployment**: Step-by-step runbooks
+
+---
+
+**💡 Dica:** Estes padrões devem ser seguidos por toda a equipe. Quando em dúvida, consulte este documento ou discuta com o time técnico.

@@ -1,17 +1,15 @@
-# syntax=docker/dockerfile:1
-
-FROM node:22-alpine
+# Stage 1: Build
+FROM node:22-alpine AS build
 WORKDIR /app
-
 COPY package*.json ./
-RUN npm ci
-
+RUN npm install
 COPY . .
-
-# Build frontend
 RUN npm run build
 
-ENV NODE_ENV=production
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY .docker/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["nginx", "-g", "daemon off;"]
