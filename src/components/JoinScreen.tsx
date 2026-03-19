@@ -16,22 +16,22 @@ export function JoinScreen({ name, setName, error, handleJoin, setShowRules }: J
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-[#141414] border border-white/10 rounded-2xl p-8 shadow-2xl"
+        className="w-full max-w-md rounded-[28px] border border-white/10 bg-[#141414] p-8 shadow-2xl"
       >
         <div className="flex justify-between items-start mb-6 w-full">
           <button
              onClick={() => setShowRules(true)}
-             className="p-2 border border-white/10 text-gray-400 rounded-full hover:bg-white/5 transition-colors absolute top-4 left-4"
+             className="absolute left-4 top-4 rounded-full border border-white/10 p-2 text-gray-400 transition-colors hover:bg-white/5"
              title="Como Jogar"
           >
             <HelpCircle size={18} />
           </button>
-          <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center border border-emerald-500/30 mx-auto">
-            <Zap className="text-emerald-400 w-8 h-8" />
-          </div>
-        </div>
-        <h1 className="text-3xl font-bold text-center mb-2 tracking-tight">CONTATO</h1>
-        <p className="text-gray-400 text-center mb-8 text-sm">O jogo de sintonia e adivinhação</p>
+           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/20">
+             <Zap className="text-emerald-400 w-8 h-8" />
+           </div>
+         </div>
+        <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">CONTATO</h1>
+        <p className="mb-8 text-center text-sm text-gray-400">Primeiro escolha como quer ser chamado na mesa.</p>
 
         <form onSubmit={handleJoin} className="space-y-4">
           <div>
@@ -48,10 +48,10 @@ export function JoinScreen({ name, setName, error, handleJoin, setShowRules }: J
           {error && <p className="text-red-400 text-xs flex items-center gap-1"><AlertCircle size={14} /> {error}</p>}
           <button
             type="submit"
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/20"
-          >
-            Entrar na Sala
-          </button>
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/20"
+            >
+              Continuar
+            </button>
         </form>
       </motion.div>
     </div>

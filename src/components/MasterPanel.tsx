@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Shield, User } from 'lucide-react';
 import { Player } from '../types/game';
 
@@ -19,6 +19,14 @@ export function MasterPanel({
   master, masterName, isMaster, hasWord, players, myId, 
   becomeMaster, wordInput, setWordInput, setWord 
 }: MasterPanelProps) {
+  const wordInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isMaster && !hasWord) {
+      wordInputRef.current?.focus();
+    }
+  }, [isMaster, hasWord]);
+
   return (
     <div className="space-y-6">
       <section className="bg-[#141414] border border-white/10 rounded-2xl p-6">
@@ -53,6 +61,7 @@ export function MasterPanel({
           <h2 className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-4">Defina a Palavra</h2>
           <form onSubmit={setWord} className="space-y-3">
             <input
+              ref={wordInputRef}
               type="text"
               value={wordInput}
               onChange={(e) => setWordInput(e.target.value)}

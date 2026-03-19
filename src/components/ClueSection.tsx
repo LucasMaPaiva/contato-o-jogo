@@ -29,6 +29,7 @@ export function ClueSection({
   
   const activeClues = clues.filter(c => c.status === 'pending' || c.status === 'contacted');
   const hasActiveClue = activeClues.length > 0;
+  const latestPendingClueId = activeClues.filter(c => c.status === 'pending').at(-1)?.id;
   const burnedWords = clues.filter(c => c.status === 'blocked');
   const history = clues.filter(c => c.status === 'resolved' || c.status === 'failed');
 
@@ -74,13 +75,14 @@ export function ClueSection({
                   key={clue.id}
                   clue={clue}
                   isMaster={isMaster}
-                  playerName={playerName}
-                  contactWord={contactInputs[clue.id] || ''}
-                  updateContactInput={updateContactInput}
-                  onContact={onContact}
-                  onBlock={onBlock}
-                />
-              ))}
+                   playerName={playerName}
+                   contactWord={contactInputs[clue.id] || ''}
+                   updateContactInput={updateContactInput}
+                   onContact={onContact}
+                   onBlock={onBlock}
+                   shouldAutoFocus={clue.id === latestPendingClueId}
+                 />
+               ))}
             </AnimatePresence>
 
             {!hasActiveClue && (

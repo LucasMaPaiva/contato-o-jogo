@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Clue } from '../types/game';
 
@@ -10,9 +10,20 @@ type ClueItemProps = {
   updateContactInput: (id: string, val: string) => void;
   onContact: (clueId: string, e: React.FormEvent) => void;
   onBlock: (clueId: string, e: React.FormEvent) => void;
+  shouldAutoFocus: boolean;
 };
 
-export function ClueItem({ clue, isMaster, playerName, contactWord, updateContactInput, onContact, onBlock }: ClueItemProps) {
+export function ClueItem({ clue, isMaster, playerName, contactWord, updateContactInput, onContact, onBlock, shouldAutoFocus }: ClueItemProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const canFocusMasterInput = isMaster && clue.status === 'pending';
+  const canFocusPlayerInput = !isMaster && clue.status === 'pending' && clue.player !== playerName;
+
+  useEffect(() => {
+    if (shouldAutoFocus && (canFocusMasterInput || canFocusPlayerInput)) {
+      inputRef.current?.focus();
+    }
+  }, [shouldAutoFocus, canFocusMasterInput, canFocusPlayerInput]);
+
   return (
     <motion.div
       layout
@@ -51,6 +62,7 @@ export function ClueItem({ clue, isMaster, playerName, contactWord, updateContac
               className="flex-1 flex gap-2"
             >
               <input
+                ref={inputRef}
                 type="text"
                 value={contactWord}
                 onChange={(e) => updateContactInput(clue.id, e.target.value)}
@@ -76,6 +88,7 @@ export function ClueItem({ clue, isMaster, playerName, contactWord, updateContac
               className="flex-1 flex gap-2"
             >
               <input
+                ref={inputRef}
                 type="text"
                 value={contactWord}
                 onChange={(e) => updateContactInput(clue.id, e.target.value)}
