@@ -59,7 +59,4 @@ make down
 
 ## 🔐 Segurança e HTTPS
 
-Este projeto foi desenhado para rodar atrás de um **Proxy Reverso** (ex: Nginx Proxy Manager). O Dockerfile utiliza uma build multi-stage que gera os arquivos estáticos e os serve através de um servidor Nginx otimizado, configurado para suportar roteamento de SPA (Single Page Application).
-
----
-Desenvolvido por Antigravity 🤖
+Este projeto foi desenhado para rodar atrás de um **Proxy Reverso** (ex: Nginx Proxy Manager). O Dockerfile utiliza uma build multi-stage que gera os arquivos estáticos e os serve através de um servidor Nginx otimizado, configurado para suportar roteamento de SPA (Single Page Application)
