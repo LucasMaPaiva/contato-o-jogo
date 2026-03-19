@@ -2,7 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useGameSocket } from './hooks/useGameSocket';
 import { Header } from './components/Header';
 import { RulesModal } from './components/RulesModal';
+import { ResetVoteModal } from './components/ResetVoteModal';
+import { ResetVoteBanner } from './components/ResetVoteBanner';
 import { JoinScreen } from './components/JoinScreen';
+import { RoomScreen } from './components/RoomScreen';
 import { ChatPanel } from './components/ChatPanel';
 import { WordDisplay } from './components/WordDisplay';
 import { MasterPanel } from './components/MasterPanel';
@@ -10,11 +13,14 @@ import { ClueSection } from './components/ClueSection';
 
 export default function App() {
   const [name, setName] = useState('');
-  const [isJoined, setIsJoined] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState<'name' | 'rooms' | 'game'>('name');
   const [showRules, setShowRules] = useState(false);
+  const [showResetVoteModal, setShowResetVoteModal] = useState(false);
   
-  // Custom Hook for Socket Logic
-  const { myId, gameState, ws, error, setError, chatMessages, sendAction } = useGameSocket(name, isJoined, setIsJoined);
+  const { myId, gameState, error, setError, chatMessages, sendAction, connectToRoom, leaveRoom, isConnecting } = useGameSocket(name, {
+    onJoined: () => setCurrentScreen('game'),
+    onDisconnected: () => setCurrentScreen('rooms'),
+  });
 
   // Local Input States
   const [wordInput, setWordInput] = useState('');
@@ -30,15 +36,40 @@ export default function App() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
-  if (!isJoined) {
+  useEffect(() => {
+    if (currentScreen !== 'game') {
+      return;
+    }
+
+    if (!gameState?.resetVote) {
+      setShowResetVoteModal(false);
+    }
+  }, [currentScreen, gameState?.resetVote]);
+
+  if (currentScreen === 'name') {
     return (
       <>
         <JoinScreen 
           name={name} 
           setName={setName} 
           error={error} 
-          handleJoin={(e) => { e.preventDefault(); if (name.trim()) { setError(''); setIsJoined(true); } }}
+          handleJoin={(e) => { e.preventDefault(); if (name.trim()) { setError(''); setCurrentScreen('rooms'); } }}
           setShowRules={setShowRules}
+        />
+        <RulesModal showRules={showRules} setShowRules={setShowRules} />
+      </>
+    );
+  }
+
+  if (currentScreen === 'rooms') {
+    return (
+      <>
+        <RoomScreen
+          name={name}
+          error={error}
+          isConnecting={isConnecting}
+          onCreateRoom={() => connectToRoom({ mode: 'create' })}
+          onJoinRoom={(roomCode) => connectToRoom({ mode: 'join', roomCode })}
         />
         <RulesModal showRules={showRules} setShowRules={setShowRules} />
       </>
@@ -49,6 +80,9 @@ export default function App() {
 
   const isMaster = gameState.master === myId;
   const isWon = gameState.gameStatus === 'won';
+  const resetVotesCount = gameState.resetVote?.votes.length ?? 0;
+  const requiredResetVotes = Math.floor(gameState.players.length / 2) + 1;
+  const hasVotedForReset = gameState.resetVote?.votes.includes(myId) ?? false;
 
   // Handlers
   const handleBecomeMaster = () => sendAction('BECOME_MASTER', { name });
@@ -91,15 +125,44 @@ export default function App() {
     }
   };
 
+  const handleLeaveRoom = () => {
+    leaveRoom();
+    setCurrentScreen('rooms');
+    setShowResetVoteModal(false);
+    setWordInput('');
+    setClueInput('');
+    setClueWordInput('');
+    setChatInput('');
+    setContactInputs({});
+  };
+
+  const handleResetVoteConfirm = () => {
+    sendAction(gameState.resetVote ? 'VOTE_RESET' : 'REQUEST_RESET');
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-sans">
       <Header 
         playersCount={gameState.players.length} 
+        roomCode={gameState.roomCode}
+        resetVotesCount={resetVotesCount}
+        requiredResetVotes={requiredResetVotes}
         setShowRules={setShowRules} 
-        onReset={() => sendAction('RESET')} 
+        onOpenResetVote={() => setShowResetVoteModal(true)}
+        onLeaveRoom={handleLeaveRoom}
       />
 
       <RulesModal showRules={showRules} setShowRules={setShowRules} />
+      <ResetVoteModal
+        open={showResetVoteModal}
+        roomCode={gameState.roomCode}
+        requestedByName={gameState.resetVote?.requestedByName}
+        votesCount={resetVotesCount}
+        requiredVotes={requiredResetVotes}
+        hasVoted={hasVotedForReset}
+        onClose={() => setShowResetVoteModal(false)}
+        onConfirm={handleResetVoteConfirm}
+      />
 
       <main className="max-w-5xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="space-y-6">
@@ -127,12 +190,22 @@ export default function App() {
         </div>
 
         <div className="lg:col-span-2 space-y-6">
+          {gameState.resetVote && (
+            <ResetVoteBanner
+              requestedByName={gameState.resetVote.requestedByName}
+              votesCount={resetVotesCount}
+              requiredVotes={requiredResetVotes}
+              hasVoted={hasVotedForReset}
+              onOpenVoteModal={() => setShowResetVoteModal(true)}
+            />
+          )}
+
           <WordDisplay 
             hasWord={!!gameState.word}
             word={gameState.word}
             revealedLetters={gameState.revealedLetters}
             isWon={isWon}
-            onReset={() => sendAction('RESET')}
+            onOpenResetVote={() => setShowResetVoteModal(true)}
           />
 
           <ClueSection 

@@ -6,10 +6,10 @@ type WordDisplayProps = {
   word: string;
   revealedLetters: string;
   isWon: boolean;
-  onReset: () => void;
+  onOpenResetVote: () => void;
 };
 
-export function WordDisplay({ hasWord, word, revealedLetters, isWon, onReset }: WordDisplayProps) {
+export function WordDisplay({ hasWord, word, revealedLetters, isWon, onOpenResetVote }: WordDisplayProps) {
   return (
     <section className={`border rounded-2xl p-8 text-center transition-all ${isWon ? 'bg-emerald-500/10 border-emerald-500 shadow-xl shadow-emerald-500/20' : 'bg-[#141414] border-white/10'}`}>
       <h2 className={`text-xs font-bold uppercase tracking-widest mb-6 ${isWon ? 'text-emerald-400' : 'text-gray-500'}`}>
@@ -36,10 +36,10 @@ export function WordDisplay({ hasWord, word, revealedLetters, isWon, onReset }: 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8">
           <p className="text-xl font-bold text-white mb-2">Os adivinhadores venceram!</p>
           <button
-            onClick={onReset}
+            onClick={onOpenResetVote}
             className="mt-2 bg-white text-black font-bold px-8 py-3 rounded-xl hover:bg-gray-200 transition-colors"
           >
-            Jogar Novamente
+            Votar para Jogar Novamente
           </button>
         </motion.div>
       )}

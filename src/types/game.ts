@@ -21,9 +21,16 @@ export type ChatMessage = {
   timestamp: string;
 };
 
+export type ResetVoteState = {
+  requestedById: string;
+  requestedByName: string;
+  votes: string[];
+};
+
 export type GameStatus = 'playing' | 'won';
 
 export type GameState = {
+  roomCode: string;
   master: string | null;
   masterName: string;
   word: string;
@@ -31,4 +38,5 @@ export type GameState = {
   gameStatus: GameStatus;
   players: Player[];
   clues: Clue[];
+  resetVote: ResetVoteState | null;
 };
